@@ -1,0 +1,30 @@
+---
+description: University OOP project scope and simplicity standards
+alwaysApply: true
+---
+
+# University OOP Scope
+
+This is a university project, not a commercial production application.
+
+Aim for a design that is sufficiently technical for evaluation, but avoid
+commercial concerns such as scalability, distributed architecture, production
+observability, high availability, or enterprise patterns unless the user asks.
+
+Design priorities:
+
+- Clarity of code.
+- Readability.
+- Communicating intention.
+- Core OOP principles: encapsulation, inheritance where natural, polymorphism,
+  contracts, responsibility assignment, and simple collaboration between objects.
+- Strict abstraction layers for the purposes of learning and explanation.
+
+Communication channels between objects should be methods that hide technical
+details behind clear contracts.
+
+Attributes should represent model data and domain concepts. Do not expose or
+shape attributes around implementation mechanics unless the project explicitly
+requires it.
+
+Keep everything outside the required OOP concepts simple, direct, and readable.

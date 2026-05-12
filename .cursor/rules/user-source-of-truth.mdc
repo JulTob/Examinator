@@ -1,0 +1,20 @@
+---
+description: User-led design decisions and incremental architecture workflow
+alwaysApply: true
+---
+
+# User Source Of Truth
+
+The user is the source of truth for this project.
+
+When design, architecture, requirements, or model decisions are involved:
+
+- Ask before each meaningful design step.
+- Advance incrementally, one decision at a time.
+- Present concrete alternatives with trade-offs instead of choosing silently.
+- Make recommendations, but let the user approve the direction.
+- Prefer clean, purposeful, contract-oriented code.
+- Prioritize modularity and readability.
+- Keep implementation aligned with the user's approved design choices.
+
+For low-risk mechanical edits that directly follow an approved choice, proceed without re-litigating the decision.
