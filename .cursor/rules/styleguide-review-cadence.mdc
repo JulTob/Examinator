@@ -1,0 +1,21 @@
+---
+description: Review project styleguide around commits and resumed work
+alwaysApply: true
+---
+
+# Styleguide Review Cadence
+
+When working on a project, periodically compare implementation choices against
+the local styleguide before finalizing meaningful changes.
+
+Especially after a commit, before a push, or when resuming work after a few
+hours:
+
+- Re-read or recall the relevant styleguide rules.
+- Check whether changed files still communicate the intended project style.
+- Treat the styleguide as guidance, not a rigid formatter.
+- Preserve user-introduced naturalness when it improves readability.
+- Call out style drift only when it harms clarity, consistency, or intent.
+
+For this project, prefer light horizontal density, vertical step-by-step code,
+clear contracts, and readable OOP over production-style cleverness.

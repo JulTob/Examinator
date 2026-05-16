@@ -1,11 +1,15 @@
 package p2.dominio.preguntas;
 
+import java.io.Serializable;
+
 import p2.dominio.impresion.IImprimible;
 
 /**
  * Opción de respuesta para una pregunta de opciones.
  */
-public class OpcionRespuesta implements IImprimible {
+public class OpcionRespuesta implements IImprimible, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String texto;
     private final boolean correcta;

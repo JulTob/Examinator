@@ -144,3 +144,28 @@ make javadoc
 ### Implementación de clase Pregunta
   - Problema: Getters polimorficos con diferente return type no se resuelven por tipo de asignación. GetNota [float] se corrige. Deberá castearse fuera.
   - 
+
+
+
+
+## Bibliografía de Consulta y Asistencia IA
+
+Se ha utilizado un sistema de small-ML disponible por Google: NotebookLM. 
+Este Modelo permite consultar fuentes bibliográficas específicas 
+sin salir de las fuentes. 
+
+Gracias a esto podemos controlar los parámetros de diseño 
+sin introducir vulnerabilidades, y pudiendo consultar gracias a 
+su sistema de referencias las fuentes originales para su coherencia. 
+
+El modelo ha complementado la creación de 
+las preguntas gracias a sus generadores de material de estudio. 
+
+También, bajo revisión estricta de las fuentes, se ha utilizado para consultar 
+la metodología y la consulta de librerías auxiliares. 
+
+Las fuentes bibliográficas han sido las siguientes:
+- Java 23 for Absolute Beginners, _Iuliana Cosmina_. ISBN-13 (pbk): 979-8-8688-1040-4 ISBN-13 (electronic): 979-8-8688-1041-1 https://doi.org/10.1007/979-8-8688-1041-1
+- JAVA ESSENTIALS VOLUME 2: OBJECT-ORIENTED PROGRAMMING AND BEYOND - _Lawrence G. Decamora III_. ISBN 13: 978-1-63651-657-8
+- Wicked Cool Java - _Brian D. Eubanks_ ISBN: 1-59327-061-5
+- Java (Tutorials Point) - Website.

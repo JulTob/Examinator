@@ -1,0 +1,22 @@
+---
+description: Suggest small next steps after commits, pushes, and resumed sessions
+alwaysApply: true
+---
+
+# Project Planning Cadence
+
+After each commit or push, and when resuming a project after a few hours,
+briefly help the user recover the project direction.
+
+When planning next work:
+
+- Check the stated requirements and current project documents.
+- Separate required behavior from optional enhancements.
+- Identify the next small, easy-to-review implementation step.
+- Offer alternatives with reasons in plain language and technical detail.
+- Keep the user as the source of truth for design choices.
+- Prefer a simple Software Engineering workflow:
+  decide, implement a small slice, verify, document if needed, then continue.
+
+Do not over-plan. The goal is to keep the project moving in clear,
+understandable increments.

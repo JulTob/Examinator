@@ -2,19 +2,11 @@
 
 Documento de diseño del modelo de la Practica 2.
 
-El modelo se mantiene dividido en piezas pequeñas,
-legibles y fáciles de revisar.
-
-## Criterios De Diseño
-- Las relaciones entre clases se documentan en diagramas pequenos,
-  orientados a comportamiento.
-
 ## Vision General Del Modelo
 
 ```mermaid
 flowchart TB
     
-
     Pregunta(["Pregunta"])
     Asignatura["Asignatura"]
     Examen["Examen"]
@@ -33,6 +25,10 @@ flowchart TB
     ApartadoDesarrollo["ApartadoDesarrollo"]
     Convocatoria["Convocatoria"]
     IImprimible("IImprimible")
+    
+    ArchivoPreguntas("ArchivoPreguntas")
+    ArchivoPreguntasMarkdown["ArchivoPreguntasMarkdown"]
+    ArchivoPreguntasJson["ArchivoPreguntasJson"]
 
     IImprimible -.-> Examen
     IImprimible -.-> Pregunta
@@ -52,6 +48,8 @@ flowchart TB
 
     PreguntaOpciones --- OpcionRespuesta
     PreguntaDesarrollo --- ApartadoDesarrollo
+    ArchivoPreguntas -.-> ArchivoPreguntasMarkdown
+    ArchivoPreguntas -.-> ArchivoPreguntasJson
 
     classDef contract fill:#f0fdfa,stroke:#2dd4bf,color:#1e1b4b
     classDef entity fill:#eef2ff,stroke:#818cf8,color:#1e1b4b
@@ -59,12 +57,14 @@ flowchart TB
     classDef subtype fill:#fff7ed,stroke:#fb923c,color:#1e1b4b
     classDef metadata fill:#f0f9ff,stroke:#38bdf8,color:#1e1b4b
 
-    class IImprimible contract
+    class IImprimible,ArchivoPreguntas contract
     class Asignatura,Examen entity
     class Pregunta,PreguntaTest abstract
     class PreguntaTeorica,PreguntaRellenar,PreguntaDesarrollo,PreguntaVerdaderoFalso,PreguntaOpciones subtype
-    class OpcionRespuesta,ApartadoDesarrollo,Convocatoria,TipoPregunta metadata
+    class OpcionRespuesta,ApartadoDesarrollo,Convocatoria,TipoPregunta,FormatoPreguntas,ArchivoPreguntasMarkdown,ArchivoPreguntasJson metadata
 ```
+
+
 
 ## Interfaz De Impresión
 
@@ -78,8 +78,8 @@ las respuestas correctas.
 
 Ademas,
 la interfaz incluye atajos `imprimir()`
-e `imprimir(true)`
-para poder elegir el modo con un booleano.
+e `imprimir(boolean incluirRespuestas)` 
+par abstraer ambos métodos en una llamada.
 
 ```
 String imprimirSimple()
@@ -89,9 +89,7 @@ String imprimir(boolean incluirRespuestas)
 ```
 
 El booleano `incluirRespuestas`
-se usa para mostrar informacion
-solo cuando se pide el modo completo.
-En preguntas equivale a imprimir con respuestas.
+equivale a imprimir con respuestas.
 
 ```mermaid
 classDiagram
@@ -104,14 +102,22 @@ classDiagram
         }
 ```
 
+
+
 ## Clase Asignatura
 
 Modela una asignatura para asociar a las preguntas
 y examenes.
 
 Almacena el codigo,
-el titulo
-y el conjunto de preguntas asociadas.
+el titulo,
+la lista de preguntas contenidas en la carpeta propia.
+
+Se utiliza en el *filesystem* que organiza estas preguntas. 
+La separación en carpetas por código de asignatura se se abstrae. 
+Se busca resolver problemas de escala de cantidad de preguntas y
+mantener la información organizada, además de facilitar la revisión manual
+ y permitir añadir nuevas asignaturas sin mezclar sus preguntas.
 
 ```mermaid
 classDiagram
@@ -132,9 +138,6 @@ classDiagram
 
 
 
-
-
-
 ## Clase Examen
 
 Representa un examen generado para el usuario.
@@ -146,6 +149,17 @@ el curso,
 el tipo de examen
 y las preguntas seleccionadas.
 
+Tambien guarda la puntuacion maxima del examen.
+Por defecto sera `10.0`,
+siguiendo la escala habitual del enunciado,
+pero se deja como valor ajustable
+para que el modelo no dependa de un numero mágico fijo.
+
+Esta puntuacion maxima no representa una nota obtenida
+por un alumno.
+Solo indica sobre cuantos puntos se ponderan
+las preguntas del examen.
+
 ```mermaid
 classDiagram
 
@@ -156,8 +170,11 @@ classDiagram
         -convocatoria Convocatoria
         -curso String
         -tipo TipoExamen
+        -puntuacionMaxima double
         -preguntas List~Pregunta~
         +Examen(realizadoPor, asignatura, convocatoria, curso, tipo, preguntas)
+        +Examen(realizadoPor, asignatura, convocatoria, curso, tipo, puntuacionMaxima, preguntas)
+        +getPuntuacionMaxima() double
         +resumen() String
         +imprimir() String
         +imprimir(boolean) String
@@ -165,14 +182,21 @@ classDiagram
 ```
 
 
+
 ## Clase Pregunta
 
 Clase abstracta comun para todos los tipos de pregunta.
 
 Datos:
+
 - texto,
 - texto aclaratorio
 - nota numerica.
+
+La nota de una pregunta representa su valor maximo
+dentro de un examen.
+Se usa como ponderacion,
+no como correccion de una respuesta de alumno.
 
 ```mermaid
 classDiagram
@@ -191,6 +215,7 @@ classDiagram
         +imprimir(boolean) String
     }
 ```
+
 
 
 ## Clase PreguntaTeorica
@@ -212,6 +237,7 @@ classDiagram
 ```
 
 
+
 ## Clase PreguntaTest
 
 Clase abstracta para preguntas tipo test.
@@ -220,18 +246,24 @@ Centraliza la regla de penalizacion por fallo,
 comun a verdadero/falso
 y listado de opciones.
 
+La penalizacion es un valor numérico que se resta en fallo. 
+Un valor `0.0` significa que la pregunta no penaliza. Valor por defecto. 
+Un valor mayor que `0.0` indica cuantos puntos se penalizarian
+si la respuesta fuese incorrecta.
+
 ```mermaid
 classDiagram
     class PreguntaTest {
         <<abstract>>
-        -restaSiFalla boolean
-        +PreguntaTest(texto, textoAclaratorio, nota, restaSiFalla)
-        +restaSiFalla() boolean
+        -penalizacion double
+        +PreguntaTest(texto, textoAclaratorio, nota, penalizacion)
+        +getPenalizacion() double
         +getTipoPregunta() TipoPregunta
         +imprimir() String
         +imprimir(boolean) String
     }
 ```
+
 
 
 ## Clase PreguntaVerdaderoFalso
@@ -246,13 +278,14 @@ La respuesta correcta no aparece en el modo simple.
 classDiagram
     class PreguntaVerdaderoFalso {
         -respuestaCorrecta boolean
-        +PreguntaVerdaderoFalso(texto, textoAclaratorio, nota, restaSiFalla, respuestaCorrecta)
+        +PreguntaVerdaderoFalso(texto, textoAclaratorio, nota, penalizacion, respuestaCorrecta)
         +isRespuestaCorrecta() boolean
         +getTipoPregunta() TipoPregunta
         +imprimir() String
         +imprimir(boolean) String
     }
 ```
+
 
 
 ## Clase PreguntaOpciones
@@ -266,7 +299,7 @@ pero esa informacion solo se imprime en modo completo.
 classDiagram
     class PreguntaOpciones {
         -opciones List~OpcionRespuesta~
-        +PreguntaOpciones(texto, textoAclaratorio, nota, restaSiFalla)
+        +PreguntaOpciones(texto, textoAclaratorio, nota, penalizacion)
         +getOpciones() List~OpcionRespuesta~
         +agregarOpcion(opcion) void
         +getTipoPregunta() TipoPregunta
@@ -274,6 +307,7 @@ classDiagram
         +imprimir(boolean) String
     }
 ```
+
 
 
 ## Clase OpcionRespuesta
@@ -295,6 +329,7 @@ classDiagram
         +imprimir(boolean) String
     }
 ```
+
 
 
 ## Clase PreguntaRellenar
@@ -320,6 +355,7 @@ classDiagram
 ```
 
 
+
 ## Clase PreguntaDesarrollo
 
 Pregunta practica o de desarrollo.
@@ -343,6 +379,7 @@ classDiagram
 ```
 
 
+
 ## Clase ApartadoDesarrollo
 
 Valor asociado a `PreguntaDesarrollo`.
@@ -363,6 +400,7 @@ classDiagram
 ```
 
 
+
 ## Enumeracion Convocatoria
 
 Valores validos de convocatoria exigidos por el enunciado.
@@ -376,6 +414,7 @@ classDiagram
         DICIEMBRE
     }
 ```
+
 
 
 ## Enumeracion TipoExamen
@@ -394,6 +433,7 @@ classDiagram
 ```
 
 
+
 ## Enumeracion TipoPregunta
 
 Permite clasificar preguntas sin depender de clases concretas
@@ -410,6 +450,7 @@ classDiagram
         DESARROLLO
     }
 ```
+
 
 
 ## Relacion: Impresion Del Dominio
@@ -443,6 +484,7 @@ classDiagram
 ```
 
 
+
 ## Relacion: Asignatura Y Preguntas
 
 Una asignatura agrupa preguntas.
@@ -469,6 +511,7 @@ classDiagram
         -nota double
     }
 ```
+
 
 
 ## Relacion: Examen, Asignatura Y Preguntas
@@ -507,6 +550,7 @@ classDiagram
 ```
 
 
+
 ## Relacion: Jerarquia De Preguntas
 
 La clase `Pregunta` define los datos comunes.
@@ -536,7 +580,7 @@ classDiagram
 
     class PreguntaTest {
         <<abstract>>
-        -restaSiFalla boolean
+        -penalizacion double
     }
 
     class PreguntaVerdaderoFalso {
@@ -556,6 +600,7 @@ classDiagram
         -apartados List~ApartadoDesarrollo~
     }
 ```
+
 
 
 ## Relacion: Pregunta De Opciones
@@ -586,6 +631,7 @@ classDiagram
 ```
 
 
+
 ## Relacion: Pregunta De Desarrollo
 
 `PreguntaDesarrollo` se compone de apartados.
@@ -609,6 +655,7 @@ classDiagram
 ```
 
 
+
 ## Relacion: Tipos Y Reglas De Composicion
 
 `TipoExamen` decide que preguntas son compatibles.
@@ -625,6 +672,12 @@ y reparto de notas
 debe vivir en un componente de generacion
 o en un metodo aislado de seleccion,
 no dentro de `Examen`.
+
+El reparto de notas se calcula respecto a la puntuacion maxima
+del examen.
+El valor por defecto es `10.0`.
+Si se usa otro valor,
+las mismas reglas se aplican sobre esa puntuacion maxima.
 
 ```mermaid
 classDiagram
@@ -651,50 +704,158 @@ classDiagram
 ```
 
 
+
+## Relacion: Archivo De Preguntas Persistidas
+
+Las preguntas se almacenan en ficheros legibles
+por asignatura.
+
+El dominio no depende del formato concreto del fichero.
+Para conseguirlo,
+la lectura y escritura se definen mediante el contrato
+`ArchivoPreguntas`.
+
+`ArchivoPreguntas` transforma un fichero de preguntas
+en una lista de objetos `Pregunta`
+y tambien puede escribir una lista de preguntas
+de vuelta al fichero.
+El resto del programa no necesita saber
+si el fichero esta escrito en Markdown,
+JSON
+u otro formato futuro.
+
+La implementacion principal sera `ArchivoPreguntasMarkdown`,
+porque el formato Markdown limitado es facil de revisar
+y editar por una persona.
+
+Tambien se modela `ArchivoPreguntasJson`
+como implementacion alternativa.
+Su objetivo es demostrar que el diseno no esta atado a Markdown:
+si se quisiera cambiar a JSON,
+solo habria que cambiar la implementacion de `ArchivoPreguntas`
+sin modificar las clases del dominio.
+
+```mermaid
+classDiagram
+    RepositorioPreguntas --> ArchivoPreguntas : lee/escribe mediante contrato
+    ArchivoPreguntas <|.. ArchivoPreguntasMarkdown
+    ArchivoPreguntas <|.. ArchivoPreguntasJson
+    ArchivoPreguntas --> Pregunta : transforma lista
+    RepositorioPreguntas --> FormatoPreguntas : configura formato
+
+    class ArchivoPreguntas {
+        <<interface>>
+        +leer(ruta) List~Pregunta~
+        +escribir(ruta, preguntas) void
+    }
+
+    class ArchivoPreguntasMarkdown {
+        +leer(ruta) List~Pregunta~
+        +escribir(ruta, preguntas) void
+    }
+
+    class ArchivoPreguntasJson {
+        +leer(ruta) List~Pregunta~
+        +escribir(ruta, preguntas) void
+    }
+
+    class RepositorioPreguntas {
+        +cargar(asignatura) List~Pregunta~
+        +guardar(asignatura) void
+    }
+```
+
+
+
+La seleccion de formato puede representarse con una enumeracion sencilla:
+
+```mermaid
+classDiagram
+    class FormatoPreguntas {
+        <<enumeration>>
+        MARKDOWN
+        JSON
+    }
+```
+
+
+
+Regla de diseno:
+
+- `ArchivoPreguntas` es el contrato estable.
+- `ArchivoPreguntasMarkdown` conoce solo el formato Markdown limitado.
+- `ArchivoPreguntasJson` conoce solo el formato JSON.
+- `RepositorioPreguntas` coordina carga y guardado,
+pero trabaja con el contrato `ArchivoPreguntas`.
+- `Asignatura`,
+`Examen`
+y `Pregunta`
+no conocen Markdown,
+JSON
+ni rutas concretas.
+
 ## Reglas Importantes Del Modelo
 
 - `Pregunta` es abstracta porque no existe una pregunta generica
-  instanciable en el enunciado.
+instanciable en el enunciado.
 - `PreguntaTest` tambien es abstracta porque el PDF exige subtipos
-  concretos.
+concretos.
 - `imprimir()` nunca muestra respuestas correctas.
 - `imprimir(true)` muestra todos los datos necesarios para revisar
-  el examen.
-- `Examen` no reparte notas.
-  Guarda preguntas ya seleccionadas
-  y puntuadas.
+el examen.
+- `Examen`. Entidad Pasiva. 
+Guarda preguntas ya seleccionadas
+y puntuadas.
 - `TipoExamen` existe porque el PDF obliga a distinguir reglas de
-  composicion:
-  teorico,
-  test,
-  practico
-  y mixto.
-- En un examen mixto debe existir una pregunta de desarrollo con valor
-  `4`.
-- En examenes no mixtos la nota se reparte por igual entre preguntas.
+composicion:
+teorico,
+test,
+practico
+y mixto.
+- La puntuacion maxima de un examen es `10.0` por defecto,
+pero puede ajustarse si se quiere generar un examen sobre otra escala.
+- La nota de cada pregunta indica su valor maximo dentro del examen,
+no una calificacion obtenida por un alumno.
+- En un examen mixto sobre `10.0`,
+debe existir una pregunta de desarrollo con valor `4`.
+- En examenes no mixtos,
+la puntuacion maxima se reparte por igual entre preguntas.
 - `PreguntaDesarrollo` debe validar que sus apartados suman `100`.
 - `Asignatura` es la raiz natural para localizar preguntas disponibles.
-
+- Las preguntas se persisten por asignatura
+en `files/preguntas/<codigo>/preguntas.md`.
+- La clasificacion fisica por carpetas pertenece
+a `RepositorioPreguntas`,
+no a `Asignatura`.
+- El formato Markdown se aísla detras de `ArchivoPreguntas`.
+ Cambiar a JSON implica usar `ArchivoPreguntasJson`,
+no modificar el dominio.
 
 ## Resumen De Responsabilidades
 
-| Elemento | Responsabilidad |
-| --- | --- |
-| `IImprimible` | Contrato comun de impresion simple y completa. |
-| `Asignatura` | Agrupa preguntas por codigo y titulo. |
-| `Examen` | Guarda cabecera, asignatura y preguntas seleccionadas. |
-| `Pregunta` | Define datos comunes de cualquier pregunta. |
-| `PreguntaTeorica` | Guarda respuesta ejemplar correcta. |
-| `PreguntaTest` | Centraliza penalizacion por fallo. |
-| `PreguntaVerdaderoFalso` | Modela test binario. |
-| `PreguntaOpciones` | Modela test con varias opciones. |
-| `OpcionRespuesta` | Guarda texto de opcion y si es correcta. |
-| `PreguntaRellenar` | Guarda frase con huecos y palabras correctas. |
-| `PreguntaDesarrollo` | Agrupa apartados practicos evaluables. |
-| `ApartadoDesarrollo` | Guarda texto y porcentaje de un apartado. |
-| `Convocatoria` | Limita convocatorias validas. |
-| `TipoExamen` | Limita tipos de examen validos. |
-| `TipoPregunta` | Limita tipos de pregunta validos. |
+
+| Elemento                  | Responsabilidad                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| `IImprimible`             | Contrato comun de impresion simple y completa.                            |
+| `Asignatura`              | Agrupa preguntas por codigo y titulo.                                     |
+| `Examen`                  | Guarda cabecera, asignatura y preguntas seleccionadas.                    |
+| `Pregunta`                | Define datos comunes de cualquier pregunta.                               |
+| `PreguntaTeorica`         | Guarda respuesta ejemplar correcta.                                       |
+| `PreguntaTest`            | Define comportamientos de preguntas tipo test .                           |
+| `PreguntaVerdaderoFalso`  | Modela test binario.                                                      |
+| `PreguntaOpciones`        | Modela test con varias opciones.                                          |
+| `OpcionRespuesta`         | Guarda texto de opcion y si es correcta.                                  |
+| `PreguntaRellenar`        | Guarda frase con huecos y palabras correctas.                             |
+| `PreguntaDesarrollo`      | Agrupa apartados practicos evaluables.                                    |
+| `ApartadoDesarrollo`      | Guarda texto y porcentaje de un apartado.                                 |
+| `Convocatoria`            | Limita convocatorias validas.                                             |
+| `TipoExamen`              | Limita tipos de examen validos.                                           |
+| `TipoPregunta`            | Limita tipos de pregunta validos.                                         |
+| `RepositorioPreguntas`      | Guarda y carga preguntas en carpetas separadas por asignatura.              |
+| `ArchivoPreguntas`          | Contrato para leer y escribir preguntas sin exponer el formato del fichero. |
+| `ArchivoPreguntasMarkdown`  | Lee y escribe el formato Markdown limitado elegido para usuarios.            |
+| `ArchivoPreguntasJson`      | Lee y escribe una alternativa JSON sin cambiar el dominio.                   |
+| `FormatoPreguntas`          | Limita los formatos soportados: Markdown o JSON.                            |
 
 
 ## Ampliacion Opcional: Sistema De Dificultad
@@ -711,10 +872,21 @@ y actualizarla con sesiones de prueba controladas.
 
 La dificultad de cada pregunta se guarda como un valor entre `0.0`
 y `1.0`.
+Ese valor se interpreta como porcentaje normalizado:
+
+- `0.0` equivale a `0%`;
+- `0.5` equivale a `50%`;
+- `1.0` equivale a `100%`.
+
 Al crear una pregunta,
 su dificultad inicial es `0.5`,
 porque aun no hay evidencia suficiente
-para considerarla facil o dificil. 
+para considerarla facil o dificil.
+En el fichero Markdown aparece como metadato:
+
+```text
+> dificultad: 0.5
+```
 
 `TestTester` es el programa auxiliar de la ampliacion.
 Puede ejecutarse de forma independiente al flujo normal
@@ -725,13 +897,15 @@ El flujo previsto es:
 - pedir el codigo de una asignatura;
 - seleccionar una asignatura concreta;
 - no mezclar asignaturas,
-  porque la maestria del tester solo tiene sentido
-  dentro de una materia;
+porque la maestria del tester solo tiene sentido
+dentro de una materia;
 - seleccionar `N` preguntas para probar;
 - recoger respuestas objetivas en preguntas deterministas;
 - pedir una valoracion subjetiva de dificultad
-  en preguntas libres o de desarrollo;
-- actualizar la dificultad historica de las preguntas probadas.
+en preguntas libres o de desarrollo;
+- actualizar la dificultad historica de las preguntas probadas;
+- escribir de nuevo el fichero de preguntas
+  para persistir el metadato `dificultad` actualizado.
 
 El usuario de esta prueba se modela como `SujetoTester`.
 No tiene que ser necesariamente un alumno real:
@@ -746,11 +920,11 @@ Durante la sesion,
 su maestria se actualiza con las preguntas deterministas:
 
 - si acierta muchas,
-  se acerca a `1.0`;
+se acerca a `1.0`;
 - si falla muchas,
-  se acerca a `0.0`;
+se acerca a `0.0`;
 - si queda cerca de `0.5`,
-  se considera un tester más informativo.
+se considera un tester más informativo.
 
 La idea es no dar demasiado peso
 a testers extremos:
@@ -758,7 +932,7 @@ a testers extremos:
 - quien acierta todo puede conocer ya las respuestas;
 - quien falla todo puede no servir para estimar la dificultad;
 - quien queda cerca de `0.5` aporta maxima incertidumbre
-  y es mas util para calibrar.
+y es mas util para calibrar.
 
 Para explicar la regla se usan estos valores:
 
@@ -775,19 +949,28 @@ X = 4 * M*(1-M)
 Por tanto:
 
 - si `M` esta cerca de `0.5`,
-  `X` se acerca a `1.0`;
+`X` se acerca a `1.0`;
 - si `M` esta cerca de `0.0` o `1.0`,
-  `X` se acerca a `0.0`.
+`X` se acerca a `0.0`.
 
 Para preguntas deterministas,
 la actualizacion solo se hace cuando el resultado aporta informacion:
 
-- si el tester falla una pregunta que parecia mas facil que su nivel,
-  la dificultad sube;
-- si el tester acierta una pregunta que parecia mas dificil que su nivel,
-  la dificultad baja;
-- si el resultado era esperable,
-  la dificultad no cambia.
+- Si el tester falla una pregunta que parecia mas facil que su nivel,  
+la dificultad sube.
+- Si el tester acierta una pregunta que parecia mas dificil que su nivel,  
+la dificultad baja.
+- Si el resultado era esperable,  
+la dificultad no cambia.
+- La actualización sigue la formula:
+
+```text
+D = ((10.0-X)*D + X*M)/10.0
+
+Guardarrailes opcionales:
+D = min(D,1)
+D = max(D,0)
+```
 
 Para preguntas libres o de desarrollo,
 el tester no introduce una respuesta automaticamente corregible.
@@ -798,11 +981,20 @@ Esa valoracion se convierte a escala `0.0` a `1.0`
 y se combina con la dificultad anterior,
 ponderada por `X`.
 
+Despues de actualizar `D`,
+`SistemaDificultad` modifica la dificultad de la pregunta
+y `TestTester` solicita a `RepositorioPreguntas`
+que guarde la lista completa.
+El repositorio usa `ArchivoPreguntas`
+para escribir el fichero en el formato configurado.
+
 ```mermaid
 classDiagram
     TestTester --> SistemaDificultad : usa
     TestTester --> SujetoTester : estima maestria
     TestTester --> ResultadoPrueba : crea
+    TestTester --> RepositorioPreguntas : persiste dificultad
+    RepositorioPreguntas --> ArchivoPreguntas : escribe metadatos
     SistemaDificultad --> Pregunta : actualiza dificultad
     ResultadoPrueba --> Pregunta : corresponde a
     ResultadoPrueba --> SujetoTester : realizado por
@@ -811,12 +1003,22 @@ classDiagram
         +registrarResultado(resultado) void
         +calcularDificultad(pregunta) double
         +calcularUtilidadTester(sujetoTester) double
+        +actualizarDificultad(pregunta, resultado) void
     }
 
     class TestTester {
         +ejecutarSesion(codigoAsignatura, numeroPreguntas) void
         +seleccionarPreguntas(codigoAsignatura, numeroPreguntas) List~Pregunta~
         +recogerResultado(pregunta, sujetoTester) ResultadoPrueba
+    }
+
+    class RepositorioPreguntas {
+        +guardar(asignatura) void
+    }
+
+    class ArchivoPreguntas {
+        <<interface>>
+        +escribir(ruta, preguntas) void
     }
 
     class SujetoTester {
@@ -842,22 +1044,27 @@ classDiagram
         -texto String
         -nota double
         -dificultad double
+        +getDificultad() double
+        +setDificultad(dificultad) void
     }
 ```
 
 
+
 ### Responsabilidad De La Ampliacion
 
-| Elemento | Responsabilidad |
-| --- | --- |
-| `SistemaDificultad` | Actualiza y calcula la dificultad historica de una pregunta. |
-| `TestTester` | Ejecuta sesiones de prueba para calibrar preguntas. |
-| `SujetoTester` | Representa a la persona que prueba las preguntas y su maestria estimada. |
-| `ResultadoPrueba` | Guarda el resultado observado de una pregunta en una sesion de prueba. |
+
+| Elemento            | Responsabilidad                                                          |
+| ------------------- | ------------------------------------------------------------------------ |
+| `SistemaDificultad` | Actualiza y calcula la dificultad historica de una pregunta.             |
+| `TestTester`        | Ejecuta sesiones de prueba para calibrar preguntas.                      |
+| `SujetoTester`      | Representa a la persona que prueba las preguntas y su maestria estimada. |
+| `ResultadoPrueba`   | Guarda el resultado observado de una pregunta en una sesion de prueba.   |
 
 
 - Metodo de actualizacion elegido:
-  media ponderada simple.
-  La dificultad se mueve poco a poco
-  hacia la evidencia observada,
-  ponderada por la utilidad `X` del tester.
+media ponderada simple.
+La dificultad se mueve poco a poco
+hacia la evidencia observada,
+ponderada por la utilidad `X` del tester.
+

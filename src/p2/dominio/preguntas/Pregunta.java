@@ -1,5 +1,7 @@
 package p2.dominio.preguntas;
 
+import java.io.Serializable;
+
 import p2.dominio.impresion.IImprimible;
 
 /**
@@ -8,7 +10,9 @@ import p2.dominio.impresion.IImprimible;
  * <p>La nota representa la puntuación máxima o ponderación de la pregunta,
  * no una calificación obtenida por un alumno.</p>
  */
-public abstract class Pregunta implements IImprimible {
+public abstract class Pregunta implements IImprimible, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     static final double DELTA_PUNTUACION = 0.001;
 

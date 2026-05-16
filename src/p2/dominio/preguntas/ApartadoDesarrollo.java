@@ -1,11 +1,15 @@
 package p2.dominio.preguntas;
 
+import java.io.Serializable;
+
 import p2.dominio.impresion.IImprimible;
 
 /**
  * Apartado evaluable de una pregunta de desarrollo.
  */
-public class ApartadoDesarrollo implements IImprimible {
+public class ApartadoDesarrollo implements IImprimible, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String texto;
     private final double porcentaje;
