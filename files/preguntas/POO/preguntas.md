@@ -106,6 +106,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: Java solo permite herencia simple de ?; la palabra clave ? invoca al constructor de la superclase.
 > penalizacion: 0.0
 # Java solo permite herencia simple de ?; la palabra clave ? invoca al constructor de la superclase.
 ## Completa con una palabra por hueco.
@@ -115,6 +116,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: Una clase abstracta puede tener métodos ? y también métodos ?.
 > penalizacion: 0.0
 # Una clase abstracta puede tener métodos ? y también métodos ?.
 ## Un hueco por palabra.
@@ -124,6 +126,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: El método `equals` debe ser coherente con ? para colecciones basadas en hash.
 > penalizacion: 0.0
 # El método `equals` debe ser coherente con ? para colecciones basadas en hash.
 ## Una sola palabra.
@@ -132,6 +135,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: El contrato `Comparable` define el método ? para orden natural.
 > penalizacion: 0.0
 # El contrato `Comparable` define el método ? para orden natural.
 ## Nombre del método.

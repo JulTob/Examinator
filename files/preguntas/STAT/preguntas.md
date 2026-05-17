@@ -105,6 +105,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: La desigualdad de ? acota la probabilidad de que un positivo se aleje de su media en términos de varianza.
 > penalizacion: 0.0
 # La desigualdad de ? acota la probabilidad de que un positivo se aleje de su media en términos de varianza.
 ## Apellido del matemático.
@@ -113,6 +114,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: La ley de los ? números relaciona medias muestrales con la esperanza cuando `n` crece.
 > penalizacion: 0.0
 # La ley de los ? números relaciona medias muestrales con la esperanza cuando `n` crece.
 ## Una sola palabra del nombre usual del resultado.
@@ -121,6 +123,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: El error ? es rechazar la hipótesis nula siendo esta verdadera.
 > penalizacion: 0.0
 # El error ? es rechazar la hipótesis nula siendo esta verdadera.
 ## Tipo de error estándar.
@@ -129,6 +132,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: Si `X~Bin(n,p)`, su esperanza es ?.
 > penalizacion: 0.0
 # Si `X~Bin(n,p)`, su esperanza es ?.
 ## Expresión en `n` y `p`.
@@ -209,4 +213,16 @@
 * linealidad en parámetros
 * errores con media cero
 * homocedasticidad (en el paquete clásico)
+---
+> tipo: OPCIONES
+> nota: 2.0000
+> dificultad: 0.5000
+> penalizacion: 0.0000
+# ¿Cuál es la distribución que no cambia bajo la transformada de Fourier?
+* Gausiana(0,1)
+- Lognormal(0,1)
+- Binomial(-1,1)
+- Uniforme(-1,1)
+- Impulso delta de dirac (0)
+- Uniforme constante 1
 ---

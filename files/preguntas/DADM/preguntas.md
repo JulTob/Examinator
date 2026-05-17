@@ -106,6 +106,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: Para observar datos reactivos desde la UI se usa a menudo ? en combinación con corrutinas.
 > penalizacion: 0.0
 # Para observar datos reactivos desde la UI se usa a menudo ? en combinación con corrutinas.
 ## Una palabra (clase de AndroidX).
@@ -114,6 +115,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: El fichero ? describe dependencias y plugins del módulo Android.
 > penalizacion: 0.0
 # El fichero ? describe dependencias y plugins del módulo Android.
 ## Nombre típico del script Gradle del módulo app.
@@ -122,6 +124,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: La carpeta ? contiene layouts XML como `activity_main.xml`.
 > penalizacion: 0.0
 # La carpeta ? contiene layouts XML como `activity_main.xml`.
 ## Carpeta estándar.
@@ -130,6 +133,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: El método ? de `Activity` se llama cuando la actividad ya no es visible en primer plano.
 > penalizacion: 0.0
 # El método ? de `Activity` se llama cuando la actividad ya no es visible en primer plano.
 ## Nombre del callback.

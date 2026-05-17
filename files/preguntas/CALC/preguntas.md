@@ -106,6 +106,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: La derivada de `x^n` respecto de `x` es ? para entero `n≠0`.
 > penalizacion: 0.0
 # La derivada de `x^n` respecto de `x` es ? para entero `n≠0`.
 ## Expresión en términos de `n` y `x`.
@@ -114,6 +115,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: El desarrollo de Taylor de `e^x` alrededor de 0 comienza `1 + x + ? + ...`.
 > penalizacion: 0.0
 # El desarrollo de Taylor de `e^x` alrededor de 0 comienza `1 + x + ? + ...`.
 ## Siguiente término no nulo.
@@ -122,6 +124,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: Si `f''(x)>0` en un intervalo, la función es ? en ese intervalo.
 > penalizacion: 0.0
 # Si `f''(x)>0` en un intervalo, la función es ? en ese intervalo.
 ## Una palabra (convexidad).
@@ -130,6 +133,7 @@
 > tipo: RELLENAR
 > nota: 2.0000
 > dificultad: 0.5000
+> frase: La integral definida interpreta geométricamente el área con signo bajo la curva respecto del eje ?.
 > penalizacion: 0.0
 # La integral definida interpreta geométricamente el área con signo bajo la curva respecto del eje ?.
 ## Eje horizontal estándar.
