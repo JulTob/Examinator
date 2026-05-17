@@ -5,13 +5,13 @@ import p2.dominio.asignaturas.Asignatura;
 /**
  * Coordina el guardado al cierre de todos los datos del sistema.
  */
-public class ServicioPersistencia {
+public class GuardadoAlSalir {
 
     private final RepositorioPreguntas repoPreguntas;
     private final RepositorioExamenes repoExamenes;
     private final Iterable<Asignatura> asignaturas;
 
-    public ServicioPersistencia(
+    public GuardadoAlSalir(
             RepositorioPreguntas repoPreguntas,
             RepositorioExamenes repoExamenes,
             Iterable<Asignatura> asignaturas
@@ -48,4 +48,4 @@ public class ServicioPersistencia {
             "Preguntas (markdown) y examenes (.dat) guardados."
             );
     }
-    }
+}
