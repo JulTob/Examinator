@@ -297,8 +297,8 @@ public class GeneradorExamen {
             for (OpcionRespuesta opcion : pregunta.getOpciones()) {
                 copia.agregarOpcion(
                     new OpcionRespuesta(
-                        opcion.getTexto(),
-                        opcion.isCorrecta()
+                        opcion.texto(),
+                        opcion.correcta()
                     )
                 );
             }

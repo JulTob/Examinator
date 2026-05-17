@@ -439,16 +439,16 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
             String textoAclaratorio
             ) {
 
-        if (texto.contains("?")) {
+        if (texto.contains("[?]")) {
             return texto;
         }
 
-        if (textoAclaratorio.contains("?")) {
+        if (textoAclaratorio.contains("[?]")) {
             return textoAclaratorio;
         }
 
         throw new IllegalArgumentException(
-            "La pregunta de rellenar necesita una frase con caracteres '?'."
+            "La pregunta de rellenar necesita huecos marcados con [?]."
         );
     }
 
@@ -529,10 +529,10 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
         if (pregunta instanceof PreguntaOpciones) {
             PreguntaOpciones preguntaOpciones = (PreguntaOpciones) pregunta;
             for (OpcionRespuesta opcion : preguntaOpciones.getOpciones()) {
-                if (opcion.isCorrecta()) {
-                    salida.add("* " + opcion.getTexto());
+                if (opcion.correcta()) {
+                    salida.add("* " + opcion.texto());
                 } else {
-                    salida.add("- " + opcion.getTexto());
+                    salida.add("- " + opcion.texto());
                 }
             }
             return;

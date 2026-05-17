@@ -8,6 +8,9 @@ import java.util.Scanner;
 
 import p2.dominio.asignaturas.Asignatura;
 import p2.dominio.preguntas.Pregunta;
+import p2.dominio.preguntas.PreguntaOpciones;
+import p2.dominio.preguntas.PreguntaRellenar;
+import p2.dominio.preguntas.PreguntaVerdaderoFalso;
 import p2.dominio.preguntas.TipoPregunta;
 
 /**
@@ -85,7 +88,7 @@ public class TestTester {
         for (Pregunta pregunta : seleccionadas) {
             System.out.println();
             System.out.println("----- Pregunta -----");
-            System.out.println(pregunta.imprimirSimple());
+            mostrarPregunta(pregunta);
 
             ResultadoPrueba resultado =
                 recogerResultado(
@@ -95,6 +98,11 @@ public class TestTester {
                 );
 
             sistemaDificultad.registrarResultado(resultado);
+            System.out.println(
+                resultado.isAcertada()
+                    ? "Respuesta correcta."
+                    : "Respuesta incorrecta."
+            );
             System.out.println(
                 "Dificultad actualizada: "
                     + String.format("%.3f", pregunta.getDificultad())
@@ -106,6 +114,16 @@ public class TestTester {
             "Sesion completada. Maestria final del tester: "
                 + String.format("%.3f", sujetoTester.getMaestria())
         );
+    }
+
+    private void mostrarPregunta(Pregunta pregunta) {
+        if (pregunta instanceof PreguntaOpciones preguntaOpciones) {
+            System.out.println(preguntaOpciones.imprimirEnunciado());
+            System.out.print(preguntaOpciones.imprimirOpcionesNumeradas());
+            return;
+        }
+
+        System.out.println(pregunta.imprimirSimple());
     }
 
     private List<Pregunta> seleccionarPreguntas(
@@ -124,15 +142,15 @@ public class TestTester {
             Scanner scanner
             ) {
 
-        boolean objetiva =
-            esPreguntaObjetiva(
-                pregunta.getTipoPregunta()
-            );
+        TipoPregunta tipo = pregunta.getTipoPregunta();
 
-        if (objetiva) {
-            boolean acierta = leerBooleano(
-                scanner,
-                "¿El sujeto acerto la pregunta? (s/n): "
+        if (tipo == TipoPregunta.VERDADERO_FALSO
+            || tipo == TipoPregunta.OPCIONES
+            || tipo == TipoPregunta.RELLENAR) {
+
+            boolean acierta = evaluarRespuestaObjetiva(
+                pregunta,
+                scanner
             );
 
             return new ResultadoPrueba(
@@ -160,10 +178,87 @@ public class TestTester {
         );
     }
 
-    private boolean esPreguntaObjetiva(TipoPregunta tipoPregunta) {
-        return tipoPregunta == TipoPregunta.VERDADERO_FALSO
-            || tipoPregunta == TipoPregunta.OPCIONES
-            || tipoPregunta == TipoPregunta.RELLENAR;
+    private boolean evaluarRespuestaObjetiva(
+            Pregunta pregunta,
+            Scanner scanner
+            ) {
+
+        return switch (pregunta.getTipoPregunta()) {
+            case VERDADERO_FALSO ->
+                evaluarVerdaderoFalso(
+                    (PreguntaVerdaderoFalso) pregunta,
+                    scanner
+                );
+            case OPCIONES ->
+                evaluarOpciones(
+                    (PreguntaOpciones) pregunta,
+                    scanner
+                );
+            case RELLENAR ->
+                evaluarRellenar(
+                    (PreguntaRellenar) pregunta,
+                    scanner
+                );
+            default ->
+                throw new IllegalArgumentException(
+                    "Tipo de pregunta no evaluable de forma objetiva: "
+                        + pregunta.getTipoPregunta()
+                );
+        };
+    }
+
+    private boolean evaluarVerdaderoFalso(
+            PreguntaVerdaderoFalso pregunta,
+            Scanner scanner
+            ) {
+
+        boolean respuesta = leerBooleano(
+            scanner,
+            "Respuesta (true/false o si/no): "
+        );
+
+        return respuesta == pregunta.isRespuestaCorrecta();
+    }
+
+    private boolean evaluarOpciones(
+            PreguntaOpciones pregunta,
+            Scanner scanner
+            ) {
+
+        if (pregunta.tieneVariasOpcionesCorrectas()) {
+            System.out.println(
+                "Varias opciones son validas. Indica el numero de una opcion correcta."
+            );
+        } else {
+            System.out.println(
+                "Indica el numero de la opcion correcta."
+            );
+        }
+
+        int numeroOpcion = leerEnteroEnRango(
+            scanner,
+            "Numero de opcion: ",
+            1,
+            pregunta.getOpciones().size()
+        );
+
+        return pregunta.aciertaOpcionSeleccionada(numeroOpcion);
+    }
+
+    private boolean evaluarRellenar(
+            PreguntaRellenar pregunta,
+            Scanner scanner
+            ) {
+
+        List<String> respuestas = new ArrayList<>();
+        int huecos = pregunta.cantidadHuecos();
+
+        for (int i = 1; i <= huecos; i++) {
+            System.out.print("Palabra para el hueco " + i + ": ");
+            respuestas.add(scanner.nextLine());
+        }
+
+        return pregunta.aciertaPalabrasEnOrden(respuestas);
     }
 
     private boolean leerBooleano(
@@ -174,13 +269,26 @@ public class TestTester {
         while (true) {
             System.out.print(mensaje);
             String valor = scanner.nextLine().trim().toLowerCase();
-            if (valor.equals("s") || valor.equals("si")) {
+
+            if (valor.equals("s")
+                || valor.equals("si")
+                || valor.equals("true")
+                || valor.equals("t")
+                || valor.equals("verdadero")) {
                 return true;
             }
-            if (valor.equals("n") || valor.equals("no")) {
+
+            if (valor.equals("n")
+                || valor.equals("no")
+                || valor.equals("false")
+                || valor.equals("f")
+                || valor.equals("falso")) {
                 return false;
             }
-            System.out.println("Entrada no valida. Usa s/n.");
+
+            System.out.println(
+                "Entrada no valida. Usa true/false o si/no."
+            );
         }
     }
 
@@ -194,8 +302,10 @@ public class TestTester {
         while (true) {
             System.out.print(mensaje);
             String valor = scanner.nextLine();
+
             try {
                 int numero = Integer.parseInt(valor.trim());
+
                 if (numero >= minimo && numero <= maximo) {
                     return numero;
                 }

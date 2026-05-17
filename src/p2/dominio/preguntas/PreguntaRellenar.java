@@ -9,6 +9,8 @@ import java.util.List;
  */
 public class PreguntaRellenar extends Pregunta {
 
+    private static final String MARCADOR_HUECO = "[?]";
+
     private final String fraseConHuecos;
     private final List<String> palabrasCorrectas;
 
@@ -108,6 +110,29 @@ public class PreguntaRellenar extends Pregunta {
         return builder.toString();
         }
 
+    public boolean aciertaPalabrasEnOrden(List<String> respuestas) {
+        if (respuestas == null
+            || respuestas.size() != palabrasCorrectas.size()) {
+            return false;
+            }
+
+        for (int i = 0; i < palabrasCorrectas.size(); i++) {
+            String esperada = palabrasCorrectas.get(i);
+            String recibida = respuestas.get(i);
+
+            if (recibida == null
+                || !esperada.equalsIgnoreCase(recibida.trim())) {
+                return false;
+                }
+            }
+
+        return true;
+        }
+
+    public int cantidadHuecos() {
+        return contarHuecos();
+        }
+
     private static String validarFrase(String fraseConHuecos) {
         if (fraseConHuecos == null || fraseConHuecos.isBlank()) {
             throw new IllegalArgumentException(
@@ -157,11 +182,11 @@ public class PreguntaRellenar extends Pregunta {
 
     private int contarHuecos() {
         int huecos = 0;
+        int indice = 0;
 
-        for (int i = 0; i < fraseConHuecos.length(); i++) {
-            if (fraseConHuecos.charAt(i) == '?') {
-                huecos++;
-                }
+        while ((indice = fraseConHuecos.indexOf(MARCADOR_HUECO, indice)) >= 0) {
+            huecos++;
+            indice += MARCADOR_HUECO.length();
             }
 
         return huecos;

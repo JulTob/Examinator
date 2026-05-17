@@ -12,12 +12,8 @@ public record OpcionRespuesta(
         boolean correcta
         ) implements IImprimible, Serializable {
 
-    /**
-     * Versión del formato de serialización: Java la compara al leer un fichero .dat.
-     * Valor fijo para que exámenes guardados signifiquen "misma clase lógica" aunque
-     * recompilemos; si cambiamos los campos del record en un cambio incompatible,
-     * incrementar este número (o regenerar datos).
-     */
+    //-- Intención: al persistir grafos de examen (.dat),
+    //   reabrir la misma pieza del modelo (opción de respuesta) tras recompilar.
     private static final long serialVersionUID = 1L;
 
     public OpcionRespuesta {
@@ -41,8 +37,8 @@ public record OpcionRespuesta(
         }
 
     private static String validarTexto(String texto) {
-        if (texto == null 
-            || texto.isBlank()) {
+        if (texto == null
+                || texto.isBlank()) {
             throw new IllegalArgumentException(
                     "El texto de la opcion es obligatorio."
                     );
