@@ -1,5 +1,6 @@
 package p2.consola;
 
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
