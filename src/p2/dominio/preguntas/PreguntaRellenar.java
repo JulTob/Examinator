@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class PreguntaRellenar extends Pregunta {
 
-    private static final String MARCADOR_HUECO = "[?]";
+    private static final String MARCADOR_HUECO = "?";
 
     private final String fraseConHuecos;
     private final List<String> palabrasCorrectas;

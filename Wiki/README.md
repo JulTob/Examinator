@@ -44,9 +44,8 @@ Existen dos asignaturas por defecto:
 - `POO` - `Programacion Orientada a Objetos`
 - `DADM` - `Desarrollo de aplicaciones para dispositivos moviles`
 
-Agregadas dos asignaturas más de ejemplos:
-- `CALC` - `Cálculo`
--`STAT`- `Estadística`
+Tambien hay carpetas de ejemplo para `CALC` y `STAT`.
+La aplicacion las detecta por codigo al arrancar.
 
 Las preguntas se guardan por carpeta de asignatura:
 
@@ -55,7 +54,7 @@ files/preguntas/POO/preguntas.md
 files/preguntas/DADM/preguntas.md
 ```
 
-También se incluye persistencia de exámenes en:
+La persistencia de examenes se crea al guardar examenes en:
 
 ```text
 files/examenes.dat
@@ -96,4 +95,3 @@ make javadoc
 - `MODELO.md`: modelo de dominio y ampliacion.
 - `MEMORIA.md`: memoria breve para la entrega.
 - `STYLEGUIDE.md`: decisiones de estilo.
-

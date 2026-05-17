@@ -97,6 +97,13 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
                 )
             );
 
+            if (pregunta instanceof PreguntaRellenar) {
+                PreguntaRellenar preguntaRellenar = (PreguntaRellenar) pregunta;
+                salida.add(
+                    "> frase: " + preguntaRellenar.getFraseConHuecos()
+                );
+            }
+
             if (pregunta instanceof p2.dominio.preguntas.PreguntaTest) {
                 p2.dominio.preguntas.PreguntaTest preguntaTest =
                     (p2.dominio.preguntas.PreguntaTest) pregunta;
@@ -200,6 +207,11 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
             parsearDouble(
                 metadatos.getOrDefault("penalizacion", "0.0")
             );
+        String fraseConHuecos =
+            metadatos.getOrDefault(
+                "frase",
+                ""
+            );
 
         return crearPregunta(
             tipoPregunta,
@@ -208,6 +220,7 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
             nota,
             dificultad,
             penalizacion,
+            fraseConHuecos,
             lineasCorrectas,
             lineasAlternativas
         );
@@ -260,6 +273,7 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
             double nota,
             double dificultad,
             double penalizacion,
+            String fraseConHuecos,
             List<String> lineasCorrectas,
             List<String> lineasAlternativas
             ) {
@@ -306,6 +320,7 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
                     textoAclaratorio,
                     nota,
                     dificultad,
+                    fraseConHuecos,
                     lineasCorrectas
                 );
             case DESARROLLO:
@@ -374,11 +389,13 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
             String textoAclaratorio,
             double nota,
             double dificultad,
+            String frasePersistida,
             List<String> lineasCorrectas
             ) {
 
         String fraseConHuecos =
             resolverFraseConHuecos(
+                frasePersistida,
                 texto,
                 textoAclaratorio
             );
@@ -435,20 +452,25 @@ public class ArchivoPreguntasMarkdown implements ArchivoPreguntas {
     }
 
     private String resolverFraseConHuecos(
+            String frasePersistida,
             String texto,
             String textoAclaratorio
             ) {
 
-        if (texto.contains("[?]")) {
+        if (frasePersistida.contains("?")) {
+            return frasePersistida;
+        }
+
+        if (texto.contains("?")) {
             return texto;
         }
 
-        if (textoAclaratorio.contains("[?]")) {
+        if (textoAclaratorio.contains("?")) {
             return textoAclaratorio;
         }
 
         throw new IllegalArgumentException(
-            "La pregunta de rellenar necesita huecos marcados con [?]."
+            "La pregunta de rellenar necesita huecos marcados con ?."
         );
     }
 

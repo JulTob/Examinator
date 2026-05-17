@@ -28,7 +28,6 @@ flowchart TB
     
     ArchivoPreguntas("ArchivoPreguntas")
     ArchivoPreguntasMarkdown["ArchivoPreguntasMarkdown"]
-    ArchivoPreguntasJson["ArchivoPreguntasJson"]
 
     IImprimible -.-> Examen
     IImprimible -.-> Pregunta
@@ -49,7 +48,6 @@ flowchart TB
     PreguntaOpciones --- OpcionRespuesta
     PreguntaDesarrollo --- ApartadoDesarrollo
     ArchivoPreguntas -.-> ArchivoPreguntasMarkdown
-    ArchivoPreguntas -.-> ArchivoPreguntasJson
 
     classDef contract fill:#f0fdfa,stroke:#2dd4bf,color:#1e1b4b
     classDef entity fill:#eef2ff,stroke:#818cf8,color:#1e1b4b
@@ -61,7 +59,7 @@ flowchart TB
     class Asignatura,Examen entity
     class Pregunta,PreguntaTest abstract
     class PreguntaTeorica,PreguntaRellenar,PreguntaDesarrollo,PreguntaVerdaderoFalso,PreguntaOpciones subtype
-    class OpcionRespuesta,ApartadoDesarrollo,Convocatoria,TipoPregunta,FormatoPreguntas,ArchivoPreguntasMarkdown,ArchivoPreguntasJson metadata
+    class OpcionRespuesta,ApartadoDesarrollo,Convocatoria,TipoPregunta,ArchivoPreguntasMarkdown metadata
 ```
 
 
@@ -720,28 +718,17 @@ en una lista de objetos `Pregunta`
 y tambien puede escribir una lista de preguntas
 de vuelta al fichero.
 El resto del programa no necesita saber
-si el fichero esta escrito en Markdown,
-JSON
-u otro formato futuro.
+como esta escrito el fichero Markdown.
 
-La implementacion principal sera `ArchivoPreguntasMarkdown`,
+La implementacion es `ArchivoPreguntasMarkdown`,
 porque el formato Markdown limitado es facil de revisar
 y editar por una persona.
-
-Tambien se modela `ArchivoPreguntasJson`
-como implementacion alternativa.
-Su objetivo es demostrar que el diseno no esta atado a Markdown:
-si se quisiera cambiar a JSON,
-solo habria que cambiar la implementacion de `ArchivoPreguntas`
-sin modificar las clases del dominio.
 
 ```mermaid
 classDiagram
     RepositorioPreguntas --> ArchivoPreguntas : lee/escribe mediante contrato
     ArchivoPreguntas <|.. ArchivoPreguntasMarkdown
-    ArchivoPreguntas <|.. ArchivoPreguntasJson
     ArchivoPreguntas --> Pregunta : transforma lista
-    RepositorioPreguntas --> FormatoPreguntas : configura formato
 
     class ArchivoPreguntas {
         <<interface>>
@@ -754,11 +741,6 @@ classDiagram
         +escribir(ruta, preguntas) void
     }
 
-    class ArchivoPreguntasJson {
-        +leer(ruta) List~Pregunta~
-        +escribir(ruta, preguntas) void
-    }
-
     class RepositorioPreguntas {
         +cargar(asignatura) List~Pregunta~
         +guardar(asignatura) void
@@ -766,33 +748,16 @@ classDiagram
 ```
 
 
-
-La seleccion de formato puede representarse con una enumeracion sencilla:
-
-```mermaid
-classDiagram
-    class FormatoPreguntas {
-        <<enumeration>>
-        MARKDOWN
-        JSON
-    }
-```
-
-
-
 Regla de diseno:
 
 - `ArchivoPreguntas` es el contrato estable.
 - `ArchivoPreguntasMarkdown` conoce solo el formato Markdown limitado.
-- `ArchivoPreguntasJson` conoce solo el formato JSON.
 - `RepositorioPreguntas` coordina carga y guardado,
 pero trabaja con el contrato `ArchivoPreguntas`.
 - `Asignatura`,
 `Examen`
 y `Pregunta`
-no conocen Markdown,
-JSON
-ni rutas concretas.
+no conocen Markdown ni rutas concretas.
 
 ## Reglas Importantes Del Modelo
 
@@ -828,8 +793,6 @@ en `files/preguntas/<codigo>/preguntas.md`.
 a `RepositorioPreguntas`,
 no a `Asignatura`.
 - El formato Markdown se aísla detras de `ArchivoPreguntas`.
- Cambiar a JSON implica usar `ArchivoPreguntasJson`,
-no modificar el dominio.
 
 ## Resumen De Responsabilidades
 
@@ -854,8 +817,6 @@ no modificar el dominio.
 | `RepositorioPreguntas`      | Guarda y carga preguntas en carpetas separadas por asignatura.              |
 | `ArchivoPreguntas`          | Contrato para leer y escribir preguntas sin exponer el formato del fichero. |
 | `ArchivoPreguntasMarkdown`  | Lee y escribe el formato Markdown limitado elegido para usuarios.            |
-| `ArchivoPreguntasJson`      | Lee y escribe una alternativa JSON sin cambiar el dominio.                   |
-| `FormatoPreguntas`          | Limita los formatos soportados: Markdown o JSON.                            |
 
 
 ## Ampliacion Opcional: Sistema De Dificultad
@@ -1067,4 +1028,3 @@ media ponderada simple.
 La dificultad se mueve poco a poco
 hacia la evidencia observada,
 ponderada por la utilidad `X` del tester.
-

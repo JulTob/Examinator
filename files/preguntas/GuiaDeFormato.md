@@ -30,6 +30,9 @@ Opcionales:
   - Puntuación substraida en error.
   - Por defecto `0.0`
   - `0.0` significa que la pregunta no penaliza.
+- `frase: <texto con ?>`
+  - Solo para preguntas de rellenar.
+  - Permite guardar la frase a completar separada del enunciado.
 
 # Tipos Permitidos
 
@@ -61,7 +64,7 @@ En general:
 - `TEORICA`: `*` Ejemplar ilustrativo. Solo se muestra en la opción de print completo.
 - `VERDADERO_FALSO`: `* verdadero` o `* falso`. Opcional `- falso`/`- verdadero`
 - `OPCIONES`: `-` opciones incorrectas, `*` opciones correctas. Puede haber varias correctas; en calibración de dificultad basta acertar cualquiera de ellas. 
-- `RELLENAR`: cada `*` es una palabra correcta, por orden. Indica huecos con [?]
+- `RELLENAR`: cada `*` es una palabra correcta, por orden. Indica huecos con `?`
 - `DESARROLLO`: `*` Ejemplar ilustrativo. Solo se muestra en la opción de print completo.
 
 ## Tipo Pregunta Teórica
@@ -116,4 +119,3 @@ En general:
 * Respuesta Ejemplar (Privada)
 ---
 ```
-

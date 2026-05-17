@@ -86,7 +86,7 @@ Solo reparte la puntuacion del examen generado.
 
 Para evitar librerias externas innecesarias,
 la persistencia de exámenes se ha hecho con `Serializable`,
-y la de preguntas con markdown legible/editable,.
+y la de preguntas con markdown legible y editable.
 
 ## Ejecucion
 
