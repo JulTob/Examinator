@@ -12,7 +12,7 @@ public record OpcionRespuesta(
         boolean correcta
         ) implements IImprimible, Serializable {
 
-    //-- Intención: al persistir grafos de examen (.dat),
+    //-- Al persistir grafos de examen (.dat),
     //   reabrir la misma pieza del modelo (opción de respuesta) tras recompilar.
     private static final long serialVersionUID = 1L;
 

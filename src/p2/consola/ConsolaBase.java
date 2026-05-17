@@ -64,6 +64,7 @@ public abstract class ConsolaBase {
             if (valor.equals("true")
                 || valor.equals("t")
                 || valor.equals("verdadero")
+                || valor.equals("v")
                 || valor.equals("si")
                 || valor.equals("s")) {
                 return true;
@@ -80,4 +81,10 @@ public abstract class ConsolaBase {
             System.out.println("Debes introducir true/false (o si/no).");
         }
     }
-}
+
+    //-- Liberar el scanner solo al cierre definitivo de la app;
+    //   comparte System.in y todas las vistas usan la misma instancia.
+    protected void cerrar() {
+        scanner.close();
+        }
+    }
