@@ -107,7 +107,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# Java solo permite herencia simple de [?]; la palabra clave [?] invoca al constructor de la superclase.
+# Java solo permite herencia simple de ?; la palabra clave ? invoca al constructor de la superclase.
 ## Completa con una palabra por hueco.
 * clases
 * super
@@ -116,7 +116,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# Una clase abstracta puede tener métodos [?] y también métodos [?].
+# Una clase abstracta puede tener métodos ? y también métodos ?.
 ## Un hueco por palabra.
 * abstractos
 * concretos
@@ -125,7 +125,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# El método `equals` debe ser coherente con [?] para colecciones basadas en hash.
+# El método `equals` debe ser coherente con ? para colecciones basadas en hash.
 ## Una sola palabra.
 * hashCode
 ---
@@ -133,7 +133,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# El contrato `Comparable` define el método [?] para orden natural.
+# El contrato `Comparable` define el método ? para orden natural.
 ## Nombre del método.
 * compareTo
 ---

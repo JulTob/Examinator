@@ -107,7 +107,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# La derivada de `x^n` respecto de `x` es [?] para entero `n≠0`.
+# La derivada de `x^n` respecto de `x` es ? para entero `n≠0`.
 ## Expresión en términos de `n` y `x`.
 * n x^(n-1)
 ---
@@ -115,7 +115,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# El desarrollo de Taylor de `e^x` alrededor de 0 comienza `1 + x + [?] + ...`.
+# El desarrollo de Taylor de `e^x` alrededor de 0 comienza `1 + x + ? + ...`.
 ## Siguiente término no nulo.
 * x^2/2
 ---
@@ -123,7 +123,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# Si `f''(x)>0` en un intervalo, la función es [?] en ese intervalo.
+# Si `f''(x)>0` en un intervalo, la función es ? en ese intervalo.
 ## Una palabra (convexidad).
 * convexa
 ---
@@ -131,7 +131,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# La integral definida interpreta geométricamente el área con signo bajo la curva respecto del eje [?].
+# La integral definida interpreta geométricamente el área con signo bajo la curva respecto del eje ?.
 ## Eje horizontal estándar.
 * x
 ---

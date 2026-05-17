@@ -106,7 +106,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# La desigualdad de [?] acota la probabilidad de que un positivo se aleje de su media en términos de varianza.
+# La desigualdad de ? acota la probabilidad de que un positivo se aleje de su media en términos de varianza.
 ## Apellido del matemático.
 * Chebyshev
 ---
@@ -114,7 +114,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# La ley de los [?] números relaciona medias muestrales con la esperanza cuando `n` crece.
+# La ley de los ? números relaciona medias muestrales con la esperanza cuando `n` crece.
 ## Una sola palabra del nombre usual del resultado.
 * grandes
 ---
@@ -122,7 +122,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# El error [?] es rechazar la hipótesis nula siendo esta verdadera.
+# El error ? es rechazar la hipótesis nula siendo esta verdadera.
 ## Tipo de error estándar.
 * tipo I
 ---
@@ -130,7 +130,7 @@
 > nota: 2.0000
 > dificultad: 0.5000
 > penalizacion: 0.0
-# Si `X~Bin(n,p)`, su esperanza es [?].
+# Si `X~Bin(n,p)`, su esperanza es ?.
 ## Expresión en `n` y `p`.
 * n p
 ---
