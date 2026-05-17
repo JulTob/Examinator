@@ -1,0 +1,37 @@
+---
+description: One file per step, vertical dependencies only, user confirms each change
+alwaysApply: true
+---
+
+# Incremental Single-File Cadence
+
+The user is the source of truth. Work in small, reviewable steps.
+
+## Scope Per Step
+
+- Change **one file** at a time, **or**
+- Change **one file** plus only its **vertical dependencies**:
+  - types or contracts it **implements** or **extends**,
+  - types that **call** it or are **called** by it in the same layer flow,
+  - not unrelated modules, docs, or broad refactors across the tree.
+
+Do **not** batch edits across many files “to finish faster” unless the user explicitly asks for a multi-file step.
+
+## Before Each Step
+
+1. State **what** will change (file path and intent in plain language).
+2. Explain **why** (requirement, design decision, or fix).
+3. Offer a **short alternative** only when it is a real trade-off.
+4. **Wait for user confirmation** before editing or committing.
+
+If the user already approved the exact step in the same thread, proceed without asking again.
+
+## After Each Step
+
+- Summarize what changed and what was left untouched.
+- Propose **one** sensible next step; do not plan far ahead unless asked.
+
+## Exceptions
+
+- Trivial follow-ups that the user already approved (e.g. fix a typo in the same file just edited).
+- User explicitly requests a multi-file or “do it all” pass.
