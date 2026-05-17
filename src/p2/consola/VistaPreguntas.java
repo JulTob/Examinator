@@ -14,8 +14,10 @@ import p2.persistencia.RepositorioPreguntas;
 
 /**
  * Submenu del banco de preguntas: alta, listado y baja.
- * La creacion delega en {@link PreguntaFactory}; la consola solo pide datos
- * al usuario y persiste tras cada cambio.
+ *
+ * <p>La creacion delega en {@link PreguntaFactory}; esta vista solo recoge datos,
+ * invoca la factoria y persiste tras cada alta o baja para no perder trabajo si el
+ * proceso termina antes de salir de la aplicacion.</p>
  */
 public class VistaPreguntas extends ConsolaBase {
 

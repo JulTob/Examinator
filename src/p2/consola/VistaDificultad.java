@@ -7,9 +7,11 @@ import p2.dominio.asignaturas.Asignatura;
 import p2.persistencia.RepositorioPreguntas;
 
 /**
- * Submenu de la ampliacion opcional de dificultad.
- * Delega la sesion de prueba en {@link TestTester} y persiste el metadato
- * actualizado en el fichero de preguntas de la asignatura elegida.
+ * Submenu de la ampliacion opcional de dificultad (no forma parte del nucleo obligatorio
+ * del enunciado).
+ *
+ * <p>Delega la logica de sesion en {@link TestTester} y vuelca los cambios de dificultad
+ * mediante {@link RepositorioPreguntas#guardar} sobre la asignatura seleccionada.</p>
  */
 public class VistaDificultad extends ConsolaBase {
 

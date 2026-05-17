@@ -6,13 +6,18 @@ import p2.dificultad.LectorRespuestas;
 
 /**
  * Entrada y salida compartida por todas las vistas de consola.
- * Centraliza lectura de datos y seleccion de enumerados para no repetir
- * validaciones en cada submenu.
+ *
+ * <p>Centraliza lectura tipada y seleccion de enumerados para no duplicar validaciones
+ * en cada submenu. Implementa {@link p2.dificultad.LectorRespuestas} para que la capa de
+ * dificultad dependa del contrato y no del tipo concreto {@link Scanner}.</p>
  */
 public abstract class ConsolaBase implements LectorRespuestas {
 
     protected final Scanner scanner;
 
+    /**
+     * @param scanner entrada estandar compartida por todas las vistas de la aplicacion
+     */
     protected ConsolaBase(Scanner scanner) {
         if (scanner == null) {
             throw new IllegalArgumentException(
@@ -29,10 +34,12 @@ public abstract class ConsolaBase implements LectorRespuestas {
         return scanner.nextLine();
     }
 
+    /** Lee una linea y elimina espacios al inicio y al final. */
     protected String leerTexto(String mensaje) {
         return leerLinea(mensaje).trim();
     }
 
+    /** Repite la peticion hasta obtener texto no vacio. */
     protected String leerTextoObligatorio(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje);
@@ -45,6 +52,7 @@ public abstract class ConsolaBase implements LectorRespuestas {
         }
     }
 
+    /** Solicita un entero hasta que la entrada sea numerica. */
     protected int leerEntero(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje);
@@ -57,6 +65,7 @@ public abstract class ConsolaBase implements LectorRespuestas {
         }
     }
 
+    /** Solicita un numero decimal hasta que la entrada sea valida. */
     protected double leerDouble(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje);
@@ -126,6 +135,13 @@ public abstract class ConsolaBase implements LectorRespuestas {
         }
     }
 
+    /**
+     * Lista valores de un enumerado numerados y devuelve el elegido.
+     *
+     * @param titulo encabezado mostrado antes de la lista
+     * @param valores conjunto a ofrecer (tipicamente {@code EnumType.values()})
+     * @param mensajeSeleccion prompt tras el cual el usuario introduce el indice
+     */
     protected <E extends Enum<E>> E seleccionarEnumerado(
             String titulo,
             E[] valores,

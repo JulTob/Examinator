@@ -11,7 +11,10 @@ import p2.persistencia.RepositorioPreguntas;
 
 /**
  * Seleccion y alta de asignaturas compartida por los submenus.
- * Mantiene el mapa en memoria y coordina carga y guardado con el repositorio.
+ *
+ * <p>Mantiene el mapa codigo-asignatura en memoria como fuente unica para elegir asignatura en el resto
+ * de vistas y delega lectura/escritura del banco de preguntas en {@link RepositorioPreguntas}.
+ * Las rutas fisicas por codigo de asignatura son responsabilidad del repositorio, no de esta clase.</p>
  */
 public class VistaAsignaturas extends ConsolaBase {
 
@@ -71,6 +74,10 @@ public class VistaAsignaturas extends ConsolaBase {
         return listado.get(opcion - 1);
     }
 
+    /**
+     * Sustituye en cada asignatura la lista en memoria por la cargada desde disco.
+     * Si un fichero falla, muestra advertencia y sigue con las demas.
+     */
     public void cargarPreguntas() {
         for (Asignatura asignatura : asignaturas.values()) {
             try {
@@ -89,7 +96,10 @@ public class VistaAsignaturas extends ConsolaBase {
         }
     }
 
-    //-- Incorpora carpetas bajo files/preguntas/ sin duplicar codigos ya dados de alta.
+    /**
+     * Anade al mapa asignaturas detectadas en carpetas bajo {@code files/preguntas/},
+     * sin sobrescribir codigos ya registrados (p. ej. POO y DADM).
+     */
     public void detectarAsignaturas() {
         List<Asignatura> detectadas =
             repositorioPreguntas.detectarAsignaturasDesdeCarpetas();
@@ -102,6 +112,7 @@ public class VistaAsignaturas extends ConsolaBase {
         }
     }
 
+    /** Crea una asignatura nueva, la registra en memoria y persiste un fichero vacio inicial. */
     private Asignatura crearAsignatura() {
         String codigo =
             leerTextoObligatorio(

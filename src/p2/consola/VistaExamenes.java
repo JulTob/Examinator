@@ -12,8 +12,10 @@ import p2.persistencia.RepositorioExamenes;
 
 /**
  * Submenu de examenes: creacion aleatoria y consulta de examenes guardados.
- * Las reglas de composicion y reparto de nota viven en {@link GeneradorExamen};
- * aqui solo se recogen datos y se imprime mediante {@link Examen#imprimir(boolean)}.
+ *
+ * <p>Las reglas de composicion y reparto de nota estan en {@link GeneradorExamen}.
+ * Esta vista solo pide cabecera y parametros al usuario, delega la generacion y
+ * usa {@link Examen#imprimir(boolean)} para respetar el contrato de impresion del dominio.</p>
  */
 public class VistaExamenes extends ConsolaBase {
 

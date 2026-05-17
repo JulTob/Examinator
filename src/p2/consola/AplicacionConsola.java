@@ -18,9 +18,13 @@ import p2.persistencia.markdown.ArchivoPreguntasMarkdown;
 /**
  * Punto de arranque de la aplicacion por consola.
  *
- * El menu principal agrupa acciones en submenus (Preguntas, Examenes,
- * Tests Dificultad). Cada submenu mantiene una responsabilidad clara;
- * el menu principal solo enruta la opcion elegida.
+ * <p>El menu principal agrupa acciones en submenus (preguntas, examenes,
+ * tests de dificultad). Las funciones obligatorias del enunciado siguen disponibles:
+ * alta de preguntas y examenes, listado de examenes guardados e impresion con o sin
+ * respuestas dentro del submenu correspondiente; salir persiste y cierra la entrada.</p>
+ *
+ * <p>{@link p2.persistencia.GuardadoAlSalir} concentra el volcado al abandonar la aplicacion,
+ * manteniendo esta clase enfocada en el cableado de vistas y dependencias.</p>
  */
 public class AplicacionConsola extends ConsolaBase {
 
@@ -31,6 +35,10 @@ public class AplicacionConsola extends ConsolaBase {
     private final VistaExamenes vistaExamenes;
     private final VistaDificultad vistaDificultad;
 
+    /**
+     * Construye la aplicacion: rutas de datos por defecto, repositorios, vistas y
+     * registro/carga inicial de asignaturas conocidas.
+     */
     public AplicacionConsola() {
         super(new Scanner(System.in));
 
