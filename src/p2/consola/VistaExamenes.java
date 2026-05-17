@@ -103,7 +103,11 @@ public class VistaExamenes extends ConsolaBase {
         System.out.println("=== Examenes Guardados ===");
 
         for (int i = 0; i < examenes.size(); i++) {
-            System.out.println((i + 1) + ". " + examenes.get(i).resumen());
+            System.out.println(
+                (i + 1)
+                    + ". "
+                    + examenes.get(i).resumen()
+            );
         }
 
         int opcion =
@@ -115,7 +119,8 @@ public class VistaExamenes extends ConsolaBase {
             return;
         }
 
-        if (opcion < 1 || opcion > examenes.size()) {
+        if (opcion < 1
+                || opcion > examenes.size()) {
             throw new IllegalArgumentException(
                 "Seleccion de examen no valida."
             );
@@ -128,48 +133,24 @@ public class VistaExamenes extends ConsolaBase {
             );
 
         System.out.println();
-        System.out.println(examen.imprimir(conRespuestas));
+        System.out.println(
+            examen.imprimir(conRespuestas)
+        );
     }
 
     private TipoExamen seleccionarTipoExamen() {
-        TipoExamen[] valores = TipoExamen.values();
-
-        System.out.println();
-        System.out.println("Tipos de examen:");
-
-        for (int i = 0; i < valores.length; i++) {
-            System.out.println((i + 1) + ". " + valores[i]);
-        }
-
-        int opcion = leerEntero("Selecciona tipo de examen: ");
-
-        if (opcion < 1 || opcion > valores.length) {
-            throw new IllegalArgumentException(
-                "Tipo de examen no valido."
-            );
-        }
-
-        return valores[opcion - 1];
+        return seleccionarEnumerado(
+            "Tipos de examen:",
+            TipoExamen.values(),
+            "Selecciona tipo de examen: "
+        );
     }
 
     private Convocatoria seleccionarConvocatoria() {
-        Convocatoria[] valores = Convocatoria.values();
-
-        System.out.println();
-        System.out.println("Convocatorias:");
-
-        for (int i = 0; i < valores.length; i++) {
-            System.out.println((i + 1) + ". " + valores[i]);
-        }
-
-        int opcion = leerEntero("Selecciona convocatoria: ");
-
-        if (opcion < 1 || opcion > valores.length) {
-            throw new IllegalArgumentException(
-                "Convocatoria no valida."
-            );
-        }
-
-        return valores[opcion - 1];
+        return seleccionarEnumerado(
+            "Convocatorias:",
+            Convocatoria.values(),
+            "Selecciona convocatoria: "
+        );
     }
 }
