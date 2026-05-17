@@ -1,11 +1,12 @@
 package p2.consola.comando;
 
 /**
- * Acción invocable desde el menú principal.
+ * Una opción del menú principal de la aplicación de consola.
  *
- * @return true si la aplicación debe terminar tras ejecutar el comando
+ * @return {@code true} si el programa debe terminar después de ejecutarla;
+ *         {@code false} si debe seguir mostrando el menú principal.
  */
 public interface Comando {
 
     boolean ejecutar();
-    }
+}

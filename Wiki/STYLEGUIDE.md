@@ -26,7 +26,7 @@ Definir una forma de trabajo clara, breve y consistente para desarrollar la Prac
   - Los parámetros llevan DOS tab extra respecto a la llamada,  
   para que se distingan claramente la función  
   y sus entradas.
-  - La llave de cierre `}` (o el paréntesis de cierre `)` )no se de-tabula artificialmente.  
+  - La llave de cierre `}` (o el paréntesis de cierre `)` ) no se de-tabula artificialmente.  
   Debe quedar al nivel visual del bloque padre que está cerrando.
   - Después de `}`  (o `)`) se cierra el bloque;
   la llave no debe parecer una instrucción independiente.
