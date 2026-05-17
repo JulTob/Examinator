@@ -11,15 +11,16 @@ public class ComandoSubmenu implements Comando {
         if (accion == null) {
             throw new IllegalArgumentException(
                 "La accion del submenú es obligatoria."
-            );
-        }
+                );
+            }
 
         this.accion = accion;
-    }
+
+        }
 
     @Override
     public boolean ejecutar() {
         accion.run();
         return false;
+        }
     }
-}
