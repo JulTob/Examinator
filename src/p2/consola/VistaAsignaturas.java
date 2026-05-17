@@ -68,9 +68,18 @@ public class VistaAsignaturas extends ConsolaBase {
 
     public void cargarPreguntas() {
         for (Asignatura asignatura : asignaturas.values()) {
-            asignatura.reemplazarPreguntas(
-                repositorioPreguntas.cargar(asignatura)
-            );
+            try {
+                asignatura.reemplazarPreguntas(
+                    repositorioPreguntas.cargar(asignatura)
+                );
+            } catch (UncheckedIOException | IllegalArgumentException excepcion) {
+                System.out.println(
+                    "Advertencia: preguntas de "
+                        + asignatura.getCodigo()
+                        + " no cargadas — "
+                        + excepcion.getMessage()
+                );
+            }
         }
     }
 

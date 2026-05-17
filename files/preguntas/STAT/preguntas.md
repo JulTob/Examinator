@@ -8,7 +8,7 @@
 
 ## Menciona función de masa vs densidad.
 
-- Discreta: soporte numerable, masa `p(x)` suma 1. Continua: densidad `f` con integral 1 y probabilidades por intervalos. Ejemplos: lanzamiento de dado vs normal.
+* Discreta: soporte numerable, masa `p(x)` suma 1. Continua: densidad `f` con integral 1 y probabilidades por intervalos. Ejemplos: lanzamiento de dado vs normal.
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## Fórmula conceptual.
 
-- Dispersión cuadrática alrededor de la media; desviación típica es raíz cuadrada positiva de la varianza, misma unidad que los datos.
+* Dispersión cuadrática alrededor de la media; desviación típica es raíz cuadrada positiva de la varianza, misma unidad que los datos.
 
 ---
 
@@ -30,7 +30,7 @@
 
 # Explica el p-valor en un contraste de hipótesis.
 
-- Probabilidad (bajo la hipótesis nula) de observar un estadístico tan extremo o más que el obtenido; p pequeño sugiere evidencia contra `H0` según el umbral elegido.
+* Probabilidad (bajo la hipótesis nula) de observar un estadístico tan extremo o más que el obtenido; p pequeño sugiere evidencia contra `H0` según el umbral elegido.
 
 ---
 
@@ -42,7 +42,7 @@
 
 ## Definiciones breves.
 
-- Insesgado: esperanza del estimador igual al parámetro. Consistente: converge en probabilidad al parámetro cuando crece el tamaño muestral.
+* Insesgado: esperanza del estimador igual al parámetro. Consistente: converge en probabilidad al parámetro cuando crece el tamaño muestral.
 
 ---
 
@@ -52,7 +52,7 @@
 
 # La media muestral es siempre un estimador insesgado de la media poblacional en muestreo aleatorio simple.
 
-- true
+* true
 
 ---
 
@@ -62,7 +62,7 @@
 
 # Dos eventos independientes siempre son mutuamente excluyentes si ambos tienen probabilidad positiva.
 
-- false
+* false
 
 ---
 
@@ -72,7 +72,7 @@
 
 # La correlación de Pearson mide asociación lineal entre dos variables cuantitativas.
 
-- true
+* true
 
 ---
 
@@ -82,7 +82,7 @@
 
 # Un intervalo de confianza del 95% significa que el parámetro está dentro del intervalo con probabilidad 0.95 después de observar los datos.
 
-- false
+* false
 
 ---
 
@@ -95,9 +95,7 @@
 ## Una opción.
 
 - p(1-p)
-
-- p
-
+* p
 - 1-p
 - p^2
 
@@ -111,8 +109,7 @@
 
 ## Una opción.
 
-- 0
-
+* 0
 - c
 - c^2
 - 1
@@ -128,9 +125,7 @@
 ## Una opción.
 
 - 0
-
-- 0.5
-
+* 0.5
 - 1
 - depende de la tabla sin valor
 
@@ -145,9 +140,7 @@
 ## Una opción.
 
 - la correlación al cuadrado
-
-- el cambio esperado en y por unidad de x
-
+* el cambio esperado en y por unidad de x
 - la media de x
 - el error estándar residual siempre
 
@@ -161,7 +154,7 @@
 
 ## Apellido del matemático.
 
-- Chebyshev
+* Chebyshev
 
 ---
 
@@ -173,7 +166,7 @@
 
 ## Una sola palabra del nombre usual del resultado.
 
-- grandes
+* grandes
 
 ---
 
@@ -185,7 +178,7 @@
 
 ## Tipo de error estándar.
 
-- tipo I
+* tipo I
 
 ---
 
@@ -197,7 +190,7 @@
 
 ## Expresión en `n` y `p`.
 
-- n p
+* n p
 
 ---
 
@@ -258,9 +251,7 @@
 ## Una opción.
 
 - np
-
-- np(1-p)
-
+* np(1-p)
 - p(1-p)
 - n^2 p
 
@@ -274,8 +265,7 @@
 
 ## Una opción.
 
-- E[X]E[Y]
-
+* E[X]E[Y]
 - E[X+Y]
 - Var(X)Var(Y)
 - Cov(X,Y)
@@ -290,12 +280,10 @@
 
 ## Marca todas las correctas.
 
-- mediana
-- media
-
+* mediana
+* media
 - varianza
-
-- moda
+* moda
 
 ---
 
@@ -307,12 +295,9 @@
 
 ## Marca las que suelen enseñarse primero.
 
-- linealidad en parámetros
-- errores con media cero
-
+* linealidad en parámetros
+* errores con media cero
 - tamaño muestral infinito obligatorio
-
-- homocedasticidad (en el paquete clásico)
+* homocedasticidad (en el paquete clásico)
 
 ---
-
