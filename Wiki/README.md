@@ -7,7 +7,6 @@ Orientada a Objetos.
 
 La practica incluye:
 
-- alta de asignaturas
 - alta de preguntas por asignatura;
 - alta de examenes;
 - listado de examenes guardados;
@@ -56,10 +55,9 @@ files/preguntas/POO/preguntas.md
 files/preguntas/DADM/preguntas.md
 ```
 
-Tambien se incluyen los ficheros generales:
+También se incluye persistencia de exámenes en:
 
 ```text
-files/asignaturas.md
 files/examenes.dat
 ```
 
@@ -82,6 +80,8 @@ Pruebas rapidas:
 ```bash
 make test
 ```
+
+La opcion de ampliacion de dificultad se lanza desde el menú principal de la app.
 
 Generar JavaDoc:
 
