@@ -6,128 +6,35 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import p2.consola.comando.Comando;
-import p2.consola.comando.ComandoSalir;
-import p2.consola.comando.ComandoSubmenu;
 import p2.dificultad.SistemaDificultad;
 import p2.dificultad.TestTester;
 import p2.dominio.asignaturas.Asignatura;
 import p2.generacion.GeneradorExamen;
+import p2.persistencia.GuardadoAlSalir;
 import p2.persistencia.RepositorioExamenes;
 import p2.persistencia.RepositorioPreguntas;
-import p2.persistencia.GuardadoAlSalir;
 import p2.persistencia.markdown.ArchivoPreguntasMarkdown;
 
 /**
  * Punto de arranque de la aplicacion por consola.
  *
  * El menu principal agrupa acciones en submenus (Preguntas, Examenes,
- * Tests Dificultad) en lugar de un menu plano con todas las opciones
- * mezcladas.
- * El enunciado exige crear preguntas, crear examenes,
- * ver examenes guardados y salir. Esas operaciones siguen disponibles
- * dentro de cada area. Los submenus reducen ruido en pantalla,
- * asignan una vista por responsabilidad y mantienen la ampliacion
- * de dificultad separada del flujo obligatorio.
+ * Tests Dificultad). Cada submenu mantiene una responsabilidad clara;
+ * el menu principal solo enruta la opcion elegida.
  */
 public class AplicacionConsola extends ConsolaBase {
 
     private final Map<String, Asignatura> asignaturas;
-    private final Map<Integer, Comando> comandosMenu;
+    private final GuardadoAlSalir guardadoAlSalir;
     private final VistaAsignaturas vistaAsignaturas;
+    private final VistaPreguntas vistaPreguntas;
+    private final VistaExamenes vistaExamenes;
+    private final VistaDificultad vistaDificultad;
 
     public AplicacionConsola() {
         super(new Scanner(System.in));
 
-        DependenciasConsola dependencias =
-            inicializarDependencias(
-                scanner
-            );
-
-        this.asignaturas = dependencias.asignaturas();
-        this.vistaAsignaturas = dependencias.vistaAsignaturas();
-        this.comandosMenu =
-            crearComandosMenu(
-                dependencias
-            );
-
-        registrarAsignaturasPorDefecto();
-        vistaAsignaturas.detectarAsignaturas();
-        vistaAsignaturas.cargarPreguntas();
-    }
-
-    /**
-     * Bucle del menu principal: delega en comandos y termina al salir.
-     */
-    public void ejecutar() {
-        boolean continuar = true;
-
-        while (continuar) {
-            mostrarMenuPrincipal();
-            int opcion = leerEntero("Selecciona una opcion: ");
-
-            Comando comando = comandosMenu.get(opcion);
-
-            if (comando == null) {
-                System.out.println("Opcion no valida.");
-                continue;
-            }
-
-            continuar = !comando.ejecutar();
-            }
-
-        System.out.println("Programa finalizado.");
-    }
-
-    private void mostrarMenuPrincipal() {
-        System.out.println();
-        System.out.println("===== Generador de Examenes =====");
-        System.out.println("1. Preguntas");
-        System.out.println("2. Examenes");
-        System.out.println("3. Tests Dificultad");
-        System.out.println("4. Salir");
-    }
-
-    private Map<Integer, Comando> crearComandosMenu(
-            DependenciasConsola dependencias
-    ) {
-
-        Map<Integer, Comando> comandos = new LinkedHashMap<>();
-
-        comandos.put(
-            1,
-            new ComandoSubmenu(
-                dependencias.vistaPreguntas()::ejecutar
-            )
-        );
-        comandos.put(
-            2,
-            new ComandoSubmenu(
-                dependencias.vistaExamenes()::ejecutar
-            )
-        );
-        comandos.put(
-            3,
-            new ComandoSubmenu(
-                dependencias.vistaDificultad()::ejecutar
-            )
-        );
-        comandos.put(
-            4,
-            new ComandoSalir(
-                dependencias.guardadoAlSalir(),
-                this::cerrar
-            )
-        );
-
-        return comandos;
-    }
-
-    private DependenciasConsola inicializarDependencias(
-            Scanner scannerEntrada
-    ) {
-
-        Map<String, Asignatura> mapaAsignaturas =
+        this.asignaturas =
             new LinkedHashMap<>();
 
         Path carpetaPreguntas =
@@ -150,54 +57,86 @@ public class AplicacionConsola extends ConsolaBase {
             new RepositorioExamenes(
                 archivoExamenes
             );
-        GuardadoAlSalir guardadoAlSalir =
+
+        this.guardadoAlSalir =
             new GuardadoAlSalir(
                 repositorioPreguntas,
                 repositorioExamenes,
-                mapaAsignaturas.values()
+                asignaturas.values()
             );
-        GeneradorExamen generadorExamen =
-            new GeneradorExamen();
-        TestTester testTester =
-            new TestTester(
-                new SistemaDificultad()
-            );
-
-        VistaAsignaturas vistaAsignaturasLocal =
+        this.vistaAsignaturas =
             new VistaAsignaturas(
-                scannerEntrada,
-                mapaAsignaturas,
+                scanner,
+                asignaturas,
                 repositorioPreguntas
             );
-        VistaPreguntas vistaPreguntasLocal =
+        this.vistaPreguntas =
             new VistaPreguntas(
-                scannerEntrada,
-                vistaAsignaturasLocal,
+                scanner,
+                vistaAsignaturas,
                 repositorioPreguntas
             );
-        VistaExamenes vistaExamenesLocal =
+        this.vistaExamenes =
             new VistaExamenes(
-                scannerEntrada,
-                vistaAsignaturasLocal,
+                scanner,
+                vistaAsignaturas,
                 repositorioExamenes,
-                generadorExamen
+                new GeneradorExamen()
             );
-        VistaDificultad vistaDificultadLocal =
+        this.vistaDificultad =
             new VistaDificultad(
-                scannerEntrada,
-                vistaAsignaturasLocal,
+                scanner,
+                vistaAsignaturas,
                 repositorioPreguntas,
-                testTester
+                new TestTester(
+                    new SistemaDificultad()
+                )
             );
 
-        return new DependenciasConsola(
-            mapaAsignaturas,
-            guardadoAlSalir,
-            vistaAsignaturasLocal,
-            vistaPreguntasLocal,
-            vistaExamenesLocal,
-            vistaDificultadLocal
-        );
+        registrarAsignaturasPorDefecto();
+        vistaAsignaturas.detectarAsignaturas();
+        vistaAsignaturas.cargarPreguntas();
+    }
+
+    /**
+     * Bucle del menu principal hasta que el usuario elige salir.
+     */
+    public void ejecutar() {
+        boolean continuar = true;
+
+        while (continuar) {
+            mostrarMenuPrincipal();
+            int opcion = leerEntero("Selecciona una opcion: ");
+
+            switch (opcion) {
+                case 1:
+                    vistaPreguntas.ejecutar();
+                    break;
+                case 2:
+                    vistaExamenes.ejecutar();
+                    break;
+                case 3:
+                    vistaDificultad.ejecutar();
+                    break;
+                case 4:
+                    guardarYCerrar();
+                    continuar = false;
+                    break;
+                default:
+                    System.out.println("Opcion no valida.");
+            }
+        }
+
+        System.out.println("Programa finalizado.");
+    }
+
+    private void mostrarMenuPrincipal() {
+        System.out.println();
+        System.out.println("===== Generador de Examenes =====");
+        System.out.println("1. Preguntas");
+        System.out.println("2. Examenes");
+        System.out.println("3. Tests Dificultad");
+        System.out.println("4. Salir");
     }
 
     private void registrarAsignaturasPorDefecto() {
@@ -217,13 +156,8 @@ public class AplicacionConsola extends ConsolaBase {
         );
     }
 
-    private record DependenciasConsola(
-            Map<String, Asignatura> asignaturas,
-            GuardadoAlSalir guardadoAlSalir,
-            VistaAsignaturas vistaAsignaturas,
-            VistaPreguntas vistaPreguntas,
-            VistaExamenes vistaExamenes,
-            VistaDificultad vistaDificultad
-    ) {
+    private void guardarYCerrar() {
+        guardadoAlSalir.guardarTodo();
+        cerrar();
     }
 }

@@ -71,13 +71,6 @@ public class VistaAsignaturas extends ConsolaBase {
         return listado.get(opcion - 1);
     }
 
-    //-- Volcado global al salir; los submenus tambien guardan tras cada cambio.
-    public void guardarPreguntas() {
-        repositorioPreguntas.guardarTodas(
-            asignaturas.values()
-        );
-    }
-
     public void cargarPreguntas() {
         for (Asignatura asignatura : asignaturas.values()) {
             try {
