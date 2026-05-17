@@ -64,6 +64,16 @@ public class Asignatura implements IImprimible, Serializable {
         preguntas.add(pregunta);
     }
 
+    public Pregunta eliminarPreguntaEn(int posicion) {
+        if (posicion < 1 || posicion > preguntas.size()) {
+            throw new IllegalArgumentException(
+                "La posicion de pregunta no es valida."
+            );
+        }
+
+        return preguntas.remove(posicion - 1);
+    }
+
     public void limpiarPreguntas() {
         preguntas.clear();
     }

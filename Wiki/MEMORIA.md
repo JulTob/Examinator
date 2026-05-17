@@ -10,11 +10,11 @@ e imprimir examenes con o sin respuestas.
 
 La solucion usa paquetes para separar responsabilidades:
 
-- `p2.modelo`: clases del dominio.
-- `p2.contrato`: interfaz de impresion.
-- `p2.servicio`: generacion de examenes.
+- `p2.dominio`: clases del dominio.
+- `p2.dominio.impresion`: interfaz de impresion.
+- `p2.generacion`: generacion de examenes.
 - `p2.persistencia`: guardado y carga de datos.
-- `p2.ui`: menus de consola.
+- `p2.consola`: menus de consola.
 - `p2.dificultad`: ampliacion opcional.
 
 ## Clases Principales
@@ -41,11 +41,11 @@ seleccion aleatoria,
 tipos compatibles
 y reparto de puntos.
 
-`RepositorioEstado` centraliza la persistencia.
+`RepositorioPreguntas` y `RepositorioExamenes` centralizan la persistencia.
 Las preguntas se guardan por asignatura en:
 
 ```text
-files/preguntas/<codigo_asignatura>/preguntas.dat
+files/preguntas/<codigo_asignatura>/preguntas.md
 ```
 
 
@@ -53,13 +53,17 @@ files/preguntas/<codigo_asignatura>/preguntas.dat
 files/examenes.dat
 ```
 
+`ArchivoPreguntasMarkdown` se encarga de transformar el markdown limitado en
+objetos de dominio y viceversa.
+
 ## Ampliacion
 
 La ampliacion es `SistemaDificultad`.
 Cada pregunta tiene dificultad entre `0.0` y `1.0`,
 inicialmente `0.5`.
 
-`TestTester` ejecuta sesiones de prueba por asignatura.
+`TestTester` ejecuta sesiones de prueba por asignatura
+y se expone como opcion separada en el menú.
 No mezcla asignaturas porque la maestria del sujeto tester
 solo tiene sentido dentro de una materia concreta.
 
@@ -81,8 +85,8 @@ Por eso la aplicacion no calcula calificaciones finales.
 Solo reparte la puntuacion del examen generado.
 
 Para evitar librerias externas innecesarias,
-la persistencia se ha hecho con `Serializable`,
-opcion aceptada por el enunciado.
+la persistencia de exámenes se ha hecho con `Serializable`,
+y la de preguntas con markdown legible/editable,.
 
 ## Ejecucion
 
