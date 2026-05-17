@@ -14,7 +14,7 @@ Definir una forma de trabajo clara, breve y consistente para desarrollar la Prac
 - Anotar decisiones. 
 - Cubrir requisitos. 
 - Separar responsabilidades entre modelo, persistencia, consola y contratos.
-- Explicito
+- Hacer explicitas las reglas del enunciado.
 
 ## Convenciones de Estilo
 
@@ -57,17 +57,12 @@ if (nota < 0.0) {
   - Incorporar Javadoc claro demostrando uso e intención, no algoritmo.
 - Código limpio y legible
   - Nombres explícitos
-  - Abstraer por *Bottom-Up* 
+  - Extraer helpers solo cuando el nombre aclare una regla real.
   - Encapsulación en métodos funcionales por propósito
-  - Ignorar implementación concreta,
-  algoritmos o tipos de datos
-  fuera de las interacciones públicas del objeto. 
-  - Clarificar con clases aislantes/asistentes de contrato:
-    - Ejemplo:
-    `ListaPreguntas` en lugar de `Array<Pregunta>`.
-    - Ejemplo:
-    `TablaAlumnos` en lugar de `Dataframe<Alumnos>`.
-    - Incorporar chequeos de validez en setter/getters.
+  - Ocultar detalles de implementación fuera del contrato publico.
+  - Validar entradas en constructores,
+  setters
+  y métodos que cambian estado.
 
 ## Java
 
@@ -83,4 +78,3 @@ if (nota < 0.0) {
 - Verificar que cada requisito obligatorio funciona.
 - Probar flujos principales desde consola.
 - Revisar después de cada cambio si simplifica (o complica) el diseño.
-
