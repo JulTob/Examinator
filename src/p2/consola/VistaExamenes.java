@@ -11,7 +11,9 @@ import p2.generacion.GeneradorExamen;
 import p2.persistencia.RepositorioExamenes;
 
 /**
- * Submenú de creación y consulta de exámenes.
+ * Submenu de examenes: creacion aleatoria y consulta de examenes guardados.
+ * Las reglas de composicion y reparto de nota viven en {@link GeneradorExamen};
+ * aqui solo se recogen datos y se imprime mediante {@link Examen#imprimir(boolean)}.
  */
 public class VistaExamenes extends ConsolaBase {
 
@@ -24,7 +26,7 @@ public class VistaExamenes extends ConsolaBase {
             VistaAsignaturas vistaAsignaturas,
             RepositorioExamenes repositorioExamenes,
             GeneradorExamen generadorExamen
-            ) {
+    ) {
 
         super(scanner);
 
@@ -33,6 +35,9 @@ public class VistaExamenes extends ConsolaBase {
         this.generadorExamen = generadorExamen;
     }
 
+    /**
+     * Bucle del submenu Examenes hasta que el usuario vuelve al menu principal.
+     */
     public void ejecutar() {
         boolean volver = false;
 
@@ -42,10 +47,14 @@ public class VistaExamenes extends ConsolaBase {
 
             switch (opcion) {
                 case 1:
-                    crearExamen();
+                    ejecutarConManejoErrores(
+                        this::crearExamen
+                    );
                     break;
                 case 2:
-                    verExamenesGuardados();
+                    ejecutarConManejoErrores(
+                        this::verExamenesGuardados
+                    );
                     break;
                 case 3:
                     volver = true;
@@ -65,24 +74,34 @@ public class VistaExamenes extends ConsolaBase {
     }
 
     private void crearExamen() {
-        String realizadoPor = leerTextoObligatorio("Realizado por: ");
+        String realizadoPor =
+            leerTextoObligatorio(
+                "Realizado por: "
+            );
         Asignatura asignatura =
             vistaAsignaturas.seleccionarAsignatura(
                 false
             );
         Convocatoria convocatoria = seleccionarConvocatoria();
-        String curso = leerTextoObligatorio("Curso (ej: 2025-2026): ");
+        String curso =
+            leerTextoObligatorio(
+                "Curso (ej: 2025-2026): "
+            );
         TipoExamen tipoExamen = seleccionarTipoExamen();
-        int numeroPreguntas = leerEntero("Numero de preguntas: ");
+        int numeroPreguntas =
+            leerEntero(
+                "Numero de preguntas: "
+            );
 
-        Examen examen = generadorExamen.generarExamen(
-            realizadoPor,
-            asignatura,
-            convocatoria,
-            curso,
-            tipoExamen,
-            numeroPreguntas
-        );
+        Examen examen =
+            generadorExamen.generarExamen(
+                realizadoPor,
+                asignatura,
+                convocatoria,
+                curso,
+                tipoExamen,
+                numeroPreguntas
+            );
 
         repositorioExamenes.agregar(examen);
 

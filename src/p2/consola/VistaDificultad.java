@@ -7,7 +7,9 @@ import p2.dominio.asignaturas.Asignatura;
 import p2.persistencia.RepositorioPreguntas;
 
 /**
- * Submenú de la ampliación de dificultad.
+ * Submenu de la ampliacion opcional de dificultad.
+ * Delega la sesion de prueba en {@link TestTester} y persiste el metadato
+ * actualizado en el fichero de preguntas de la asignatura elegida.
  */
 public class VistaDificultad extends ConsolaBase {
 
@@ -20,7 +22,7 @@ public class VistaDificultad extends ConsolaBase {
             VistaAsignaturas vistaAsignaturas,
             RepositorioPreguntas repositorioPreguntas,
             TestTester testTester
-            ) {
+    ) {
 
         super(scanner);
 
@@ -29,6 +31,9 @@ public class VistaDificultad extends ConsolaBase {
         this.testTester = testTester;
     }
 
+    /**
+     * Bucle del submenu Tests Dificultad hasta volver al menu principal.
+     */
     public void ejecutar() {
         boolean volver = false;
 
@@ -38,7 +43,9 @@ public class VistaDificultad extends ConsolaBase {
 
             switch (opcion) {
                 case 1:
-                    ejecutarSesionDificultad();
+                    ejecutarConManejoErrores(
+                        this::ejecutarSesionDificultad
+                    );
                     break;
                 case 2:
                     volver = true;
@@ -69,9 +76,10 @@ public class VistaDificultad extends ConsolaBase {
         testTester.ejecutarSesion(
             asignatura,
             numeroPreguntas,
-            scanner
+            this
         );
 
+        //-- Persistir dificultad actualizada en el markdown de la asignatura.
         repositorioPreguntas.guardar(asignatura);
         System.out.println("Dificultades guardadas.");
     }

@@ -2,10 +2,14 @@ package p2.consola;
 
 import java.util.Scanner;
 
+import p2.dificultad.LectorRespuestas;
+
 /**
- * Funciones comunes para las vistas de consola.
+ * Entrada y salida compartida por todas las vistas de consola.
+ * Centraliza lectura de datos y seleccion de enumerados para no repetir
+ * validaciones en cada submenu.
  */
-public abstract class ConsolaBase {
+public abstract class ConsolaBase implements LectorRespuestas {
 
     protected final Scanner scanner;
 
@@ -19,14 +23,20 @@ public abstract class ConsolaBase {
         this.scanner = scanner;
     }
 
-    protected String leerTexto(String mensaje) {
+    @Override
+    public String leerLinea(String mensaje) {
         System.out.print(mensaje);
-        return scanner.nextLine().trim();
+        return scanner.nextLine();
+    }
+
+    protected String leerTexto(String mensaje) {
+        return leerLinea(mensaje).trim();
     }
 
     protected String leerTextoObligatorio(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje);
+
             if (!valor.isBlank()) {
                 return valor;
             }
@@ -38,6 +48,7 @@ public abstract class ConsolaBase {
     protected int leerEntero(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje);
+
             try {
                 return Integer.parseInt(valor);
             } catch (NumberFormatException excepcion) {
@@ -49,6 +60,7 @@ public abstract class ConsolaBase {
     protected double leerDouble(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje);
+
             try {
                 return Double.parseDouble(valor);
             } catch (NumberFormatException excepcion) {
@@ -57,24 +69,25 @@ public abstract class ConsolaBase {
         }
     }
 
-    protected boolean leerBooleano(String mensaje) {
+    @Override
+    public boolean leerBooleano(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje).toLowerCase();
 
             if (valor.equals("true")
-                || valor.equals("t")
-                || valor.equals("verdadero")
-                || valor.equals("v")
-                || valor.equals("si")
-                || valor.equals("s")) {
+                    || valor.equals("t")
+                    || valor.equals("verdadero")
+                    || valor.equals("v")
+                    || valor.equals("si")
+                    || valor.equals("s")) {
                 return true;
             }
 
             if (valor.equals("false")
-                || valor.equals("f")
-                || valor.equals("no")
-                || valor.equals("n")
-                || valor.equals("falso")) {
+                    || valor.equals("f")
+                    || valor.equals("no")
+                    || valor.equals("n")
+                    || valor.equals("falso")) {
                 return false;
             }
 
@@ -82,9 +95,84 @@ public abstract class ConsolaBase {
         }
     }
 
+    @Override
+    public int leerEnteroEnRango(
+            String mensaje,
+            int minimo,
+            int maximo
+    ) {
+
+        while (true) {
+            String valor = leerTexto(mensaje);
+
+            try {
+                int numero = Integer.parseInt(valor);
+
+                if (numero >= minimo
+                        && numero <= maximo) {
+                    return numero;
+                }
+            } catch (NumberFormatException excepcion) {
+                // Reintento.
+            }
+
+            System.out.println(
+                "Entrada no valida. Debe estar entre "
+                    + minimo
+                    + " y "
+                    + maximo
+                    + "."
+            );
+        }
+    }
+
+    protected <E extends Enum<E>> E seleccionarEnumerado(
+            String titulo,
+            E[] valores,
+            String mensajeSeleccion
+    ) {
+
+        System.out.println();
+        System.out.println(titulo);
+
+        for (int i = 0; i < valores.length; i++) {
+            System.out.println(
+                (i + 1)
+                    + ". "
+                    + valores[i]
+            );
+        }
+
+        int opcion = leerEntero(mensajeSeleccion);
+
+        if (opcion < 1
+                || opcion > valores.length) {
+            throw new IllegalArgumentException(
+                "Opcion no valida."
+            );
+        }
+
+        return valores[opcion - 1];
+    }
+
+    /**
+     * Ejecuta una accion de menu y muestra el mensaje de error
+     * sin cerrar el submenu actual.
+     */
+    protected void ejecutarConManejoErrores(Runnable accion) {
+        try {
+            accion.run();
+        } catch (RuntimeException excepcion) {
+            System.out.println(
+                "Error: "
+                    + excepcion.getMessage()
+            );
+        }
+    }
+
     //-- Liberar el scanner solo al cierre definitivo de la app;
     //   comparte System.in y todas las vistas usan la misma instancia.
     protected void cerrar() {
         scanner.close();
-        }
     }
+}

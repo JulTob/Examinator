@@ -23,8 +23,8 @@ import p2.persistencia.markdown.ArchivoPreguntasMarkdown;
  *
  * El menu principal agrupa acciones en submenus (Preguntas, Examenes,
  * Tests Dificultad) en lugar de un menu plano con todas las opciones
- * mezcladas. 
- * El enunciado exige crear preguntas, crear examenes, 
+ * mezcladas.
+ * El enunciado exige crear preguntas, crear examenes,
  * ver examenes guardados y salir. Esas operaciones siguen disponibles
  * dentro de cada area. Los submenus reducen ruido en pantalla,
  * asignan una vista por responsabilidad y mantienen la ampliacion
@@ -33,10 +33,8 @@ import p2.persistencia.markdown.ArchivoPreguntasMarkdown;
 public class AplicacionConsola extends ConsolaBase {
 
     private final Map<String, Asignatura> asignaturas;
+    private final Map<Integer, Comando> comandosMenu;
     private final VistaAsignaturas vistaAsignaturas;
-    private final VistaPreguntas vistaPreguntas;
-    private final VistaExamenes vistaExamenes;
-    private final VistaDificultad vistaDificultad;
 
     public AplicacionConsola() {
         super(new Scanner(System.in));
@@ -45,25 +43,22 @@ public class AplicacionConsola extends ConsolaBase {
             inicializarDependencias(
                 scanner
             );
-        RepositorioExamenes repositorioExamenes =
-            new RepositorioExamenes(
-                archivoExamenes
-            );
-        GeneradorExamen generadorExamen = new GeneradorExamen();
-        TestTester testTester = new TestTester(new SistemaDificultad());
 
-        this.asignaturas = dependencias.asignaturas;
-        this.repositorioExamenes = dependencias.repositorioExamenes;
-        this.vistaAsignaturas = dependencias.vistaAsignaturas;
-        this.vistaPreguntas = dependencias.vistaPreguntas;
-        this.vistaExamenes = dependencias.vistaExamenes;
-        this.vistaDificultad = dependencias.vistaDificultad;
+        this.asignaturas = dependencias.asignaturas();
+        this.vistaAsignaturas = dependencias.vistaAsignaturas();
+        this.comandosMenu =
+            crearComandosMenu(
+                dependencias
+            );
 
         registrarAsignaturasPorDefecto();
         vistaAsignaturas.detectarAsignaturas();
         vistaAsignaturas.cargarPreguntas();
     }
 
+    /**
+     * Bucle del menu principal: delega en comandos y termina al salir.
+     */
     public void ejecutar() {
         boolean continuar = true;
 
@@ -71,27 +66,14 @@ public class AplicacionConsola extends ConsolaBase {
             mostrarMenuPrincipal();
             int opcion = leerEntero("Selecciona una opcion: ");
 
-            try {
-                switch (opcion) {
-                    case 1:
-                        vistaPreguntas.ejecutar();
-                        break;
-                    case 2:
-                        vistaExamenes.ejecutar();
-                        break;
-                    case 3:
-                        vistaDificultad.ejecutar();
-                        break;
-                    case 4:
-                        salir();
-                        continuar = false;
-                        break;
-                    default:
-                        System.out.println("Opcion no valida.");
-                }
-            } catch (RuntimeException excepcion) {
-                System.out.println("Error: " + excepcion.getMessage());
-                }
+            Comando comando = comandosMenu.get(opcion);
+
+            if (comando == null) {
+                System.out.println("Opcion no valida.");
+                continue;
+            }
+
+            continuar = !comando.ejecutar();
         }
 
         System.out.println("Programa finalizado.");
@@ -108,7 +90,7 @@ public class AplicacionConsola extends ConsolaBase {
 
     private Map<Integer, Comando> crearComandosMenu(
             DependenciasConsola dependencias
-            ) {
+    ) {
 
         Map<Integer, Comando> comandos = new LinkedHashMap<>();
 
@@ -143,7 +125,7 @@ public class AplicacionConsola extends ConsolaBase {
 
     private DependenciasConsola inicializarDependencias(
             Scanner scannerEntrada
-            ) {
+    ) {
 
         Map<String, Asignatura> mapaAsignaturas =
             new LinkedHashMap<>();
@@ -163,60 +145,60 @@ public class AplicacionConsola extends ConsolaBase {
             new RepositorioPreguntas(
                 carpetaPreguntas,
                 new ArchivoPreguntasMarkdown()
-                );
+            );
         RepositorioExamenes repositorioExamenes =
             new RepositorioExamenes(
                 archivoExamenes
-                );
+            );
         ServicioPersistencia servicioPersistencia =
             new ServicioPersistencia(
                 repositorioPreguntas,
                 repositorioExamenes,
                 mapaAsignaturas.values()
-                );
+            );
         GeneradorExamen generadorExamen =
             new GeneradorExamen();
         TestTester testTester =
             new TestTester(
                 new SistemaDificultad()
-                );
+            );
 
         VistaAsignaturas vistaAsignaturasLocal =
             new VistaAsignaturas(
                 scannerEntrada,
                 mapaAsignaturas,
                 repositorioPreguntas
-                );
+            );
         VistaPreguntas vistaPreguntasLocal =
             new VistaPreguntas(
                 scannerEntrada,
                 vistaAsignaturasLocal,
                 repositorioPreguntas
-                );
+            );
         VistaExamenes vistaExamenesLocal =
             new VistaExamenes(
                 scannerEntrada,
                 vistaAsignaturasLocal,
-                repositorioExamenesLocal,
+                repositorioExamenes,
                 generadorExamen
-                );
+            );
         VistaDificultad vistaDificultadLocal =
             new VistaDificultad(
                 scannerEntrada,
                 vistaAsignaturasLocal,
                 repositorioPreguntas,
                 testTester
-                );
+            );
 
         return new DependenciasConsola(
             mapaAsignaturas,
-            repositorioExamenesLocal,
+            servicioPersistencia,
             vistaAsignaturasLocal,
             vistaPreguntasLocal,
             vistaExamenesLocal,
             vistaDificultadLocal
-            );
-        }
+        );
+    }
 
     private void registrarAsignaturasPorDefecto() {
         asignaturas.put(
@@ -237,11 +219,11 @@ public class AplicacionConsola extends ConsolaBase {
 
     private record DependenciasConsola(
             Map<String, Asignatura> asignaturas,
-            RepositorioExamenes repositorioExamenes,
+            ServicioPersistencia servicioPersistencia,
             VistaAsignaturas vistaAsignaturas,
             VistaPreguntas vistaPreguntas,
             VistaExamenes vistaExamenes,
             VistaDificultad vistaDificultad
-            ) {
-        }
+    ) {
     }
+}

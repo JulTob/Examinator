@@ -63,6 +63,18 @@ public class RepositorioPreguntas {
         );
     }
 
+    public void guardarTodas(Iterable<Asignatura> asignaturas) {
+        if (asignaturas == null) {
+            throw new IllegalArgumentException(
+                "Las asignaturas son obligatorias."
+            );
+        }
+
+        for (Asignatura asignatura : asignaturas) {
+            guardar(asignatura);
+        }
+    }
+
     public void guardar(
             Asignatura asignatura,
             List<Pregunta> preguntas

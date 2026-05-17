@@ -10,7 +10,8 @@ import p2.dominio.asignaturas.Asignatura;
 import p2.persistencia.RepositorioPreguntas;
 
 /**
- * Vista compartida para seleccionar y crear asignaturas.
+ * Seleccion y alta de asignaturas compartida por los submenus.
+ * Mantiene el mapa en memoria y coordina carga y guardado con el repositorio.
  */
 public class VistaAsignaturas extends ConsolaBase {
 
@@ -21,7 +22,7 @@ public class VistaAsignaturas extends ConsolaBase {
             Scanner scanner,
             Map<String, Asignatura> asignaturas,
             RepositorioPreguntas repositorioPreguntas
-            ) {
+    ) {
 
         super(scanner);
 
@@ -29,6 +30,11 @@ public class VistaAsignaturas extends ConsolaBase {
         this.repositorioPreguntas = repositorioPreguntas;
     }
 
+    /**
+     * Muestra asignaturas conocidas y devuelve la elegida.
+     *
+     * @param permitirNueva si es true, la opcion 0 crea una asignatura nueva
+     */
     public Asignatura seleccionarAsignatura(boolean permitirNueva) {
         List<Asignatura> listado = new ArrayList<>(asignaturas.values());
 
@@ -37,7 +43,11 @@ public class VistaAsignaturas extends ConsolaBase {
 
         for (int i = 0; i < listado.size(); i++) {
             Asignatura asignatura = listado.get(i);
-            System.out.println((i + 1) + ". " + asignatura.imprimirSimple());
+            System.out.println(
+                (i + 1)
+                    + ". "
+                    + asignatura.imprimirSimple()
+            );
         }
 
         if (permitirNueva) {
@@ -46,11 +56,13 @@ public class VistaAsignaturas extends ConsolaBase {
 
         int opcion = leerEntero("Selecciona asignatura: ");
 
-        if (permitirNueva && opcion == 0) {
+        if (permitirNueva
+                && opcion == 0) {
             return crearAsignatura();
         }
 
-        if (opcion < 1 || opcion > listado.size()) {
+        if (opcion < 1
+                || opcion > listado.size()) {
             throw new IllegalArgumentException(
                 "Asignatura no valida."
             );
@@ -59,12 +71,11 @@ public class VistaAsignaturas extends ConsolaBase {
         return listado.get(opcion - 1);
     }
 
+    //-- Volcado global al salir; los submenus tambien guardan tras cada cambio.
     public void guardarPreguntas() {
-        for (Asignatura asignatura : asignaturas.values()) {
-            repositorioPreguntas.guardar(
-                asignatura
-            );
-        }
+        repositorioPreguntas.guardarTodas(
+            asignaturas.values()
+        );
     }
 
     public void cargarPreguntas() {
@@ -73,7 +84,8 @@ public class VistaAsignaturas extends ConsolaBase {
                 asignatura.reemplazarPreguntas(
                     repositorioPreguntas.cargar(asignatura)
                 );
-            } catch (UncheckedIOException | IllegalArgumentException excepcion) {
+            } catch (UncheckedIOException
+                    | IllegalArgumentException excepcion) {
                 System.out.println(
                     "Advertencia: preguntas de "
                         + asignatura.getCodigo()
@@ -84,6 +96,7 @@ public class VistaAsignaturas extends ConsolaBase {
         }
     }
 
+    //-- Incorpora carpetas bajo files/preguntas/ sin duplicar codigos ya dados de alta.
     public void detectarAsignaturas() {
         List<Asignatura> detectadas =
             repositorioPreguntas.detectarAsignaturasDesdeCarpetas();
@@ -108,14 +121,20 @@ public class VistaAsignaturas extends ConsolaBase {
             );
         }
 
-        String titulo = leerTextoObligatorio("Titulo asignatura: ");
+        String titulo =
+            leerTextoObligatorio(
+                "Titulo asignatura: "
+            );
         Asignatura asignatura =
             new Asignatura(
                 codigo,
                 titulo
             );
 
-        asignaturas.put(codigo, asignatura);
+        asignaturas.put(
+            codigo,
+            asignatura
+        );
         repositorioPreguntas.guardar(asignatura);
 
         return asignatura;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 import p2.dominio.asignaturas.Asignatura;
 import p2.dominio.preguntas.Pregunta;
@@ -51,7 +50,7 @@ public class TestTester {
     public void ejecutarSesion(
             Asignatura asignatura,
             int numeroPreguntas,
-            Scanner scanner
+            LectorRespuestas lector
             ) {
 
         if (asignatura == null) {
@@ -59,9 +58,9 @@ public class TestTester {
                 "La asignatura es obligatoria."
             );
         }
-        if (scanner == null) {
+        if (lector == null) {
             throw new IllegalArgumentException(
-                "El scanner es obligatorio."
+                "El lector de respuestas es obligatorio."
             );
         }
         if (numeroPreguntas <= 0) {
@@ -75,8 +74,10 @@ public class TestTester {
             );
         }
 
-        System.out.print("Nombre del sujeto tester: ");
-        String nombre = scanner.nextLine();
+        String nombre =
+            lector.leerLinea(
+                "Nombre del sujeto tester: "
+            );
         SujetoTester sujetoTester = new SujetoTester(nombre);
 
         List<Pregunta> seleccionadas =
@@ -94,7 +95,7 @@ public class TestTester {
                 recogerResultado(
                     pregunta,
                     sujetoTester,
-                    scanner
+                    lector
                 );
 
             sistemaDificultad.registrarResultado(resultado);
@@ -139,7 +140,7 @@ public class TestTester {
     private ResultadoPrueba recogerResultado(
             Pregunta pregunta,
             SujetoTester sujetoTester,
-            Scanner scanner
+            LectorRespuestas lector
             ) {
 
         TipoPregunta tipo = pregunta.getTipoPregunta();
@@ -150,7 +151,7 @@ public class TestTester {
 
             boolean acierta = evaluarRespuestaObjetiva(
                 pregunta,
-                scanner
+                lector
             );
 
             return new ResultadoPrueba(
@@ -162,8 +163,7 @@ public class TestTester {
             );
         }
 
-        int valoracion = leerEnteroEnRango(
-            scanner,
+        int valoracion = lector.leerEnteroEnRango(
             "Valoracion subjetiva de dificultad (1-10): ",
             1,
             10
@@ -180,24 +180,24 @@ public class TestTester {
 
     private boolean evaluarRespuestaObjetiva(
             Pregunta pregunta,
-            Scanner scanner
+            LectorRespuestas lector
             ) {
 
         return switch (pregunta.getTipoPregunta()) {
             case VERDADERO_FALSO ->
                 evaluarVerdaderoFalso(
                     (PreguntaVerdaderoFalso) pregunta,
-                    scanner
+                    lector
                 );
             case OPCIONES ->
                 evaluarOpciones(
                     (PreguntaOpciones) pregunta,
-                    scanner
+                    lector
                 );
             case RELLENAR ->
                 evaluarRellenar(
                     (PreguntaRellenar) pregunta,
-                    scanner
+                    lector
                 );
             default ->
                 throw new IllegalArgumentException(
@@ -209,11 +209,10 @@ public class TestTester {
 
     private boolean evaluarVerdaderoFalso(
             PreguntaVerdaderoFalso pregunta,
-            Scanner scanner
+            LectorRespuestas lector
             ) {
 
-        boolean respuesta = leerBooleano(
-            scanner,
+        boolean respuesta = lector.leerBooleano(
             "Respuesta (true/false o si/no): "
         );
 
@@ -222,7 +221,7 @@ public class TestTester {
 
     private boolean evaluarOpciones(
             PreguntaOpciones pregunta,
-            Scanner scanner
+            LectorRespuestas lector
             ) {
 
         if (pregunta.tieneVariasOpcionesCorrectas()) {
@@ -235,8 +234,7 @@ public class TestTester {
             );
         }
 
-        int numeroOpcion = leerEnteroEnRango(
-            scanner,
+        int numeroOpcion = lector.leerEnteroEnRango(
             "Numero de opcion: ",
             1,
             pregunta.getOpciones().size()
@@ -247,79 +245,20 @@ public class TestTester {
 
     private boolean evaluarRellenar(
             PreguntaRellenar pregunta,
-            Scanner scanner
+            LectorRespuestas lector
             ) {
 
         List<String> respuestas = new ArrayList<>();
         int huecos = pregunta.cantidadHuecos();
 
         for (int i = 1; i <= huecos; i++) {
-            System.out.print("Palabra para el hueco " + i + ": ");
-            respuestas.add(scanner.nextLine());
+            respuestas.add(
+                lector.leerLinea(
+                    "Palabra para el hueco " + i + ": "
+                )
+            );
         }
 
         return pregunta.aciertaPalabrasEnOrden(respuestas);
-    }
-
-    private boolean leerBooleano(
-            Scanner scanner,
-            String mensaje
-            ) {
-
-        while (true) {
-            System.out.print(mensaje);
-            String valor = scanner.nextLine().trim().toLowerCase();
-
-            if (valor.equals("s")
-                || valor.equals("si")
-                || valor.equals("true")
-                || valor.equals("t")
-                || valor.equals("verdadero")) {
-                return true;
-            }
-
-            if (valor.equals("n")
-                || valor.equals("no")
-                || valor.equals("false")
-                || valor.equals("f")
-                || valor.equals("falso")) {
-                return false;
-            }
-
-            System.out.println(
-                "Entrada no valida. Usa true/false o si/no."
-            );
-        }
-    }
-
-    private int leerEnteroEnRango(
-            Scanner scanner,
-            String mensaje,
-            int minimo,
-            int maximo
-            ) {
-
-        while (true) {
-            System.out.print(mensaje);
-            String valor = scanner.nextLine();
-
-            try {
-                int numero = Integer.parseInt(valor.trim());
-
-                if (numero >= minimo && numero <= maximo) {
-                    return numero;
-                }
-            } catch (NumberFormatException excepcion) {
-                // Reintento.
-            }
-
-            System.out.println(
-                "Entrada no valida. Debe estar entre "
-                    + minimo
-                    + " y "
-                    + maximo
-                    + "."
-            );
-        }
     }
 }

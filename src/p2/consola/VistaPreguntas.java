@@ -8,16 +8,14 @@ import p2.dominio.asignaturas.Asignatura;
 import p2.dominio.preguntas.ApartadoDesarrollo;
 import p2.dominio.preguntas.OpcionRespuesta;
 import p2.dominio.preguntas.Pregunta;
-import p2.dominio.preguntas.PreguntaDesarrollo;
-import p2.dominio.preguntas.PreguntaOpciones;
-import p2.dominio.preguntas.PreguntaRellenar;
-import p2.dominio.preguntas.PreguntaTeorica;
-import p2.dominio.preguntas.PreguntaVerdaderoFalso;
+import p2.dominio.preguntas.PreguntaFactory;
 import p2.dominio.preguntas.TipoPregunta;
 import p2.persistencia.RepositorioPreguntas;
 
 /**
- * Submenú de gestión del banco de preguntas.
+ * Submenu del banco de preguntas: alta, listado y baja.
+ * La creacion delega en {@link PreguntaFactory}; la consola solo pide datos
+ * al usuario y persiste tras cada cambio.
  */
 public class VistaPreguntas extends ConsolaBase {
 
@@ -28,7 +26,7 @@ public class VistaPreguntas extends ConsolaBase {
             Scanner scanner,
             VistaAsignaturas vistaAsignaturas,
             RepositorioPreguntas repositorioPreguntas
-            ) {
+    ) {
 
         super(scanner);
 
@@ -36,6 +34,9 @@ public class VistaPreguntas extends ConsolaBase {
         this.repositorioPreguntas = repositorioPreguntas;
     }
 
+    /**
+     * Bucle del submenu Preguntas hasta que el usuario vuelve al menu principal.
+     */
     public void ejecutar() {
         boolean volver = false;
 
@@ -45,13 +46,19 @@ public class VistaPreguntas extends ConsolaBase {
 
             switch (opcion) {
                 case 1:
-                    crearPregunta();
+                    ejecutarConManejoErrores(
+                        this::crearPregunta
+                    );
                     break;
                 case 2:
-                    listarPreguntas();
+                    ejecutarConManejoErrores(
+                        this::listarPreguntas
+                    );
                     break;
                 case 3:
-                    eliminarPregunta();
+                    ejecutarConManejoErrores(
+                        this::eliminarPregunta
+                    );
                     break;
                 case 4:
                     volver = true;
@@ -78,9 +85,18 @@ public class VistaPreguntas extends ConsolaBase {
             );
 
         TipoPregunta tipoPregunta = seleccionarTipoPregunta();
-        String texto = leerTextoObligatorio("Texto de la pregunta: ");
-        String textoAclaratorio = leerTexto("Texto aclaratorio (opcional): ");
-        double nota = leerDouble("Nota de la pregunta: ");
+        String texto =
+            leerTextoObligatorio(
+                "Texto de la pregunta: "
+            );
+        String textoAclaratorio =
+            leerTexto(
+                "Texto aclaratorio (opcional): "
+            );
+        double nota =
+            leerDouble(
+                "Nota de la pregunta: "
+            );
 
         Pregunta pregunta =
             construirPregunta(
@@ -91,6 +107,8 @@ public class VistaPreguntas extends ConsolaBase {
             );
 
         asignatura.agregarPregunta(pregunta);
+
+        //-- Guardado inmediato por si el proceso termina antes de Salir.
         repositorioPreguntas.guardar(asignatura);
 
         System.out.println(
@@ -136,7 +154,7 @@ public class VistaPreguntas extends ConsolaBase {
         }
 
         if (posicion < 1
-            || posicion > asignatura.getPreguntas().size()) {
+                || posicion > asignatura.getPreguntas().size()) {
             throw new IllegalArgumentException(
                 "Seleccion de pregunta no valida."
             );
@@ -161,6 +179,8 @@ public class VistaPreguntas extends ConsolaBase {
         asignatura.eliminarPreguntaEn(
             posicion
         );
+
+        //-- Mismo criterio que en crearPregunta: persistir tras cada cambio.
         repositorioPreguntas.guardar(
             asignatura
         );
@@ -172,7 +192,10 @@ public class VistaPreguntas extends ConsolaBase {
         List<Pregunta> preguntas = asignatura.getPreguntas();
 
         System.out.println();
-        System.out.println("Preguntas de " + asignatura.imprimirSimple());
+        System.out.println(
+            "Preguntas de "
+                + asignatura.imprimirSimple()
+        );
 
         if (preguntas.isEmpty()) {
             System.out.println("No hay preguntas.");
@@ -190,6 +213,7 @@ public class VistaPreguntas extends ConsolaBase {
         }
     }
 
+    //-- Resumen breve para listados; el examen usa imprimir() del dominio.
     private String describirPregunta(Pregunta pregunta) {
         return pregunta.getTipoPregunta()
             + " | "
@@ -206,11 +230,11 @@ public class VistaPreguntas extends ConsolaBase {
             String texto,
             String textoAclaratorio,
             double nota
-            ) {
+    ) {
 
-        switch (tipoPregunta) {
-            case TEORICA:
-                return new PreguntaTeorica(
+        return switch (tipoPregunta) {
+            case TEORICA ->
+                PreguntaFactory.crearTeorica(
                     texto,
                     textoAclaratorio,
                     nota,
@@ -218,8 +242,8 @@ public class VistaPreguntas extends ConsolaBase {
                         "Respuesta correcta: "
                     )
                 );
-            case VERDADERO_FALSO:
-                return new PreguntaVerdaderoFalso(
+            case VERDADERO_FALSO ->
+                PreguntaFactory.crearVerdaderoFalso(
                     texto,
                     textoAclaratorio,
                     nota,
@@ -230,54 +254,49 @@ public class VistaPreguntas extends ConsolaBase {
                         "Respuesta correcta (true/false): "
                     )
                 );
-            case OPCIONES:
-                return crearPreguntaOpciones(
+            case OPCIONES ->
+                leerPreguntaOpciones(
                     texto,
                     textoAclaratorio,
                     nota
                 );
-            case RELLENAR:
-                return crearPreguntaRellenar(
+            case RELLENAR ->
+                leerPreguntaRellenar(
                     texto,
                     textoAclaratorio,
                     nota
                 );
-            case DESARROLLO:
-                return crearPreguntaDesarrollo(
+            case DESARROLLO ->
+                leerPreguntaDesarrollo(
                     texto,
                     textoAclaratorio,
                     nota
                 );
-            default:
-                throw new IllegalArgumentException(
-                    "Tipo de pregunta no soportado."
-                );
-        }
+        };
     }
 
-    private Pregunta crearPreguntaOpciones(
+    private Pregunta leerPreguntaOpciones(
             String texto,
             String textoAclaratorio,
             double nota
-            ) {
+    ) {
 
         double penalizacion =
             leerDouble(
                 "Penalizacion por fallo (0 si no penaliza): "
             );
-        PreguntaOpciones pregunta = new PreguntaOpciones(
-            texto,
-            textoAclaratorio,
-            nota,
-            penalizacion
-        );
+        int numeroOpciones =
+            leerEntero(
+                "Numero de opciones: "
+            );
 
-        int numeroOpciones = leerEntero("Numero de opciones: ");
         if (numeroOpciones < 2) {
             throw new IllegalArgumentException(
                 "Una pregunta de opciones necesita al menos 2 opciones."
             );
         }
+
+        List<OpcionRespuesta> opciones = new ArrayList<>();
 
         for (int i = 1; i <= numeroOpciones; i++) {
             String textoOpcion =
@@ -288,7 +307,7 @@ public class VistaPreguntas extends ConsolaBase {
                 leerBooleano(
                     "Es correcta? (true/false): "
                 );
-            pregunta.agregarOpcion(
+            opciones.add(
                 new OpcionRespuesta(
                     textoOpcion,
                     correcta
@@ -296,26 +315,27 @@ public class VistaPreguntas extends ConsolaBase {
             );
         }
 
-        if (!pregunta.validarOpciones()) {
-            throw new IllegalArgumentException(
-                "La pregunta necesita al menos una opcion correcta."
-            );
-        }
-
-        return pregunta;
+        return PreguntaFactory.crearOpciones(
+            texto,
+            textoAclaratorio,
+            nota,
+            penalizacion,
+            opciones
+        );
     }
 
-    private Pregunta crearPreguntaRellenar(
+    private Pregunta leerPreguntaRellenar(
             String texto,
             String textoAclaratorio,
             double nota
-            ) {
+    ) {
 
         String fraseConHuecos =
             leerTextoObligatorio(
                 "Frase con huecos usando '?': "
             );
         int numeroPalabras = contarHuecos(fraseConHuecos);
+
         if (numeroPalabras <= 0) {
             throw new IllegalArgumentException(
                 "La frase de rellenar debe tener al menos un '?'."
@@ -323,6 +343,7 @@ public class VistaPreguntas extends ConsolaBase {
         }
 
         List<String> palabrasCorrectas = new ArrayList<>();
+
         for (int i = 1; i <= numeroPalabras; i++) {
             palabrasCorrectas.add(
                 leerTextoObligatorio(
@@ -331,7 +352,7 @@ public class VistaPreguntas extends ConsolaBase {
             );
         }
 
-        return new PreguntaRellenar(
+        return PreguntaFactory.crearRellenar(
             texto,
             textoAclaratorio,
             nota,
@@ -340,25 +361,24 @@ public class VistaPreguntas extends ConsolaBase {
         );
     }
 
-    private Pregunta crearPreguntaDesarrollo(
+    private Pregunta leerPreguntaDesarrollo(
             String texto,
             String textoAclaratorio,
             double nota
-            ) {
-
-        PreguntaDesarrollo pregunta = new PreguntaDesarrollo(
-            texto,
-            textoAclaratorio,
-            nota
-        );
+    ) {
 
         int numeroApartados =
-            leerEntero("Numero de apartados: ");
+            leerEntero(
+                "Numero de apartados: "
+            );
+
         if (numeroApartados <= 0) {
             throw new IllegalArgumentException(
                 "Debe existir al menos un apartado."
             );
         }
+
+        List<ApartadoDesarrollo> apartados = new ArrayList<>();
 
         for (int i = 1; i <= numeroApartados; i++) {
             String textoApartado =
@@ -370,7 +390,7 @@ public class VistaPreguntas extends ConsolaBase {
                     "Porcentaje del apartado " + i + " (0-100): "
                 );
 
-            pregunta.agregarApartado(
+            apartados.add(
                 new ApartadoDesarrollo(
                     textoApartado,
                     porcentaje
@@ -378,41 +398,31 @@ public class VistaPreguntas extends ConsolaBase {
             );
         }
 
-        if (!pregunta.validarPorcentajes()) {
-            throw new IllegalArgumentException(
-                "La suma de porcentajes debe ser 100."
-            );
-        }
-
-        return pregunta;
+        return PreguntaFactory.crearDesarrollo(
+            texto,
+            textoAclaratorio,
+            nota,
+            apartados
+        );
     }
 
     private TipoPregunta seleccionarTipoPregunta() {
-        TipoPregunta[] valores = TipoPregunta.values();
-
-        System.out.println();
-        System.out.println("Tipos de pregunta:");
-        for (int i = 0; i < valores.length; i++) {
-            System.out.println((i + 1) + ". " + valores[i]);
-        }
-
-        int opcion = leerEntero("Selecciona tipo de pregunta: ");
-        if (opcion < 1 || opcion > valores.length) {
-            throw new IllegalArgumentException(
-                "Tipo de pregunta no valido."
-            );
-        }
-
-        return valores[opcion - 1];
+        return seleccionarEnumerado(
+            "Tipos de pregunta:",
+            TipoPregunta.values(),
+            "Selecciona tipo de pregunta: "
+        );
     }
 
     private int contarHuecos(String texto) {
         int contador = 0;
+
         for (int i = 0; i < texto.length(); i++) {
             if (texto.charAt(i) == '?') {
                 contador++;
             }
         }
+
         return contador;
     }
 }
