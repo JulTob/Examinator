@@ -164,9 +164,15 @@ public class AplicacionConsola extends ConsolaBase {
                 carpetaPreguntas,
                 new ArchivoPreguntasMarkdown()
                 );
-        RepositorioExamenes repositorioExamenesLocal =
+        RepositorioExamenes repositorioExamenes =
             new RepositorioExamenes(
                 archivoExamenes
+                );
+        ServicioPersistencia servicioPersistencia =
+            new ServicioPersistencia(
+                repositorioPreguntas,
+                repositorioExamenes,
+                mapaAsignaturas.values()
                 );
         GeneradorExamen generadorExamen =
             new GeneradorExamen();
