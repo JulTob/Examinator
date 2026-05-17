@@ -1,6 +1,6 @@
 package p2.consola.comando;
 
-import p2.persistencia.ServicioPersistencia;
+import p2.persistencia.GuardadoAlSalir;
 
 /**
  * Persiste datos y cierra la entrada de consola antes de salir del programa.
@@ -11,13 +11,13 @@ public class ComandoSalir implements Comando {
     private final Runnable cerrarEntrada;
 
     public ComandoSalir(
-            ServicioPersistencia servicioPersistencia,
+            GuardadoAlSalir guardadoAlSalir,
             Runnable cerrarEntrada
             ) {
 
-        if (servicioPersistencia == null) {
+        if (guardadoAlSalir == null) {
             throw new IllegalArgumentException(
-                "El servicio de persistencia es obligatorio."
+                "El guardado al salir es obligatorio."
                 );
             }
         if (cerrarEntrada == null) {
@@ -26,16 +26,14 @@ public class ComandoSalir implements Comando {
                 );
             }
 
-        this.servicioPersistencia = servicioPersistencia;
+        this.guardadoAlSalir = guardadoAlSalir;
         this.cerrarEntrada = cerrarEntrada;
         }
 
     @Override
     public boolean ejecutar() {
-        servicioPersistencia.guardarTodo();
+        guardadoAlSalir.guardarTodo();
         cerrarEntrada.run();
         return true;
         }
-
-        
     }

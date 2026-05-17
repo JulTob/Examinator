@@ -15,7 +15,7 @@ import p2.dominio.asignaturas.Asignatura;
 import p2.generacion.GeneradorExamen;
 import p2.persistencia.RepositorioExamenes;
 import p2.persistencia.RepositorioPreguntas;
-import p2.persistencia.ServicioPersistencia;
+import p2.persistencia.GuardadoAlSalir;
 import p2.persistencia.markdown.ArchivoPreguntasMarkdown;
 
 /**
@@ -74,7 +74,7 @@ public class AplicacionConsola extends ConsolaBase {
             }
 
             continuar = !comando.ejecutar();
-        }
+            }
 
         System.out.println("Programa finalizado.");
     }
@@ -115,7 +115,7 @@ public class AplicacionConsola extends ConsolaBase {
         comandos.put(
             4,
             new ComandoSalir(
-                dependencias.servicioPersistencia(),
+                dependencias.guardadoAlSalir(),
                 this::cerrar
             )
         );
@@ -150,8 +150,8 @@ public class AplicacionConsola extends ConsolaBase {
             new RepositorioExamenes(
                 archivoExamenes
             );
-        ServicioPersistencia servicioPersistencia =
-            new ServicioPersistencia(
+        GuardadoAlSalir guardadoAlSalir =
+            new GuardadoAlSalir(
                 repositorioPreguntas,
                 repositorioExamenes,
                 mapaAsignaturas.values()
@@ -192,7 +192,7 @@ public class AplicacionConsola extends ConsolaBase {
 
         return new DependenciasConsola(
             mapaAsignaturas,
-            servicioPersistencia,
+            guardadoAlSalir,
             vistaAsignaturasLocal,
             vistaPreguntasLocal,
             vistaExamenesLocal,
@@ -219,7 +219,7 @@ public class AplicacionConsola extends ConsolaBase {
 
     private record DependenciasConsola(
             Map<String, Asignatura> asignaturas,
-            ServicioPersistencia servicioPersistencia,
+            GuardadoAlSalir guardadoAlSalir,
             VistaAsignaturas vistaAsignaturas,
             VistaPreguntas vistaPreguntas,
             VistaExamenes vistaExamenes,
