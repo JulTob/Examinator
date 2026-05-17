@@ -57,8 +57,14 @@ public class VistaDificultad extends ConsolaBase {
     }
 
     private void ejecutarSesionDificultad() {
-        Asignatura asignatura = vistaAsignaturas.seleccionarAsignatura(false);
-        int numeroPreguntas = leerEntero("Numero de preguntas de la sesion: ");
+        Asignatura asignatura =
+            vistaAsignaturas.seleccionarAsignatura(
+                false
+            );
+        int numeroPreguntas =
+            leerEntero(
+                "Numero de preguntas de la sesion: "
+            );
 
         testTester.ejecutarSesion(
             asignatura,

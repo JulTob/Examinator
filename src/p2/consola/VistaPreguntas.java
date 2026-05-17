@@ -93,7 +93,11 @@ public class VistaPreguntas extends ConsolaBase {
         asignatura.agregarPregunta(pregunta);
         repositorioPreguntas.guardar(asignatura);
 
-        System.out.println("Pregunta guardada en " + asignatura.imprimirSimple() + ".");
+        System.out.println(
+            "Pregunta guardada en "
+                + asignatura.imprimirSimple()
+                + "."
+        );
     }
 
     private void listarPreguntas() {
@@ -131,7 +135,8 @@ public class VistaPreguntas extends ConsolaBase {
             return;
         }
 
-        if (posicion < 1 || posicion > asignatura.getPreguntas().size()) {
+        if (posicion < 1
+            || posicion > asignatura.getPreguntas().size()) {
             throw new IllegalArgumentException(
                 "Seleccion de pregunta no valida."
             );
@@ -209,15 +214,21 @@ public class VistaPreguntas extends ConsolaBase {
                     texto,
                     textoAclaratorio,
                     nota,
-                    leerTextoObligatorio("Respuesta correcta: ")
+                    leerTextoObligatorio(
+                        "Respuesta correcta: "
+                    )
                 );
             case VERDADERO_FALSO:
                 return new PreguntaVerdaderoFalso(
                     texto,
                     textoAclaratorio,
                     nota,
-                    leerDouble("Penalizacion por fallo (0 si no penaliza): "),
-                    leerBooleano("Respuesta correcta (true/false): ")
+                    leerDouble(
+                        "Penalizacion por fallo (0 si no penaliza): "
+                    ),
+                    leerBooleano(
+                        "Respuesta correcta (true/false): "
+                    )
                 );
             case OPCIONES:
                 return crearPreguntaOpciones(
@@ -250,7 +261,10 @@ public class VistaPreguntas extends ConsolaBase {
             double nota
             ) {
 
-        double penalizacion = leerDouble("Penalizacion por fallo (0 si no penaliza): ");
+        double penalizacion =
+            leerDouble(
+                "Penalizacion por fallo (0 si no penaliza): "
+            );
         PreguntaOpciones pregunta = new PreguntaOpciones(
             texto,
             textoAclaratorio,

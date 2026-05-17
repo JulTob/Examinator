@@ -66,7 +66,10 @@ public class VistaExamenes extends ConsolaBase {
 
     private void crearExamen() {
         String realizadoPor = leerTextoObligatorio("Realizado por: ");
-        Asignatura asignatura = vistaAsignaturas.seleccionarAsignatura(false);
+        Asignatura asignatura =
+            vistaAsignaturas.seleccionarAsignatura(
+                false
+            );
         Convocatoria convocatoria = seleccionarConvocatoria();
         String curso = leerTextoObligatorio("Curso (ej: 2025-2026): ");
         TipoExamen tipoExamen = seleccionarTipoExamen();
@@ -103,7 +106,10 @@ public class VistaExamenes extends ConsolaBase {
             System.out.println((i + 1) + ". " + examenes.get(i).resumen());
         }
 
-        int opcion = leerEntero("Selecciona examen para imprimir (0 para volver): ");
+        int opcion =
+            leerEntero(
+                "Selecciona examen para imprimir (0 para volver): "
+            );
 
         if (opcion == 0) {
             return;
@@ -117,7 +123,9 @@ public class VistaExamenes extends ConsolaBase {
 
         Examen examen = examenes.get(opcion - 1);
         boolean conRespuestas =
-            leerBooleano("Imprimir con respuestas? (true/false): ");
+            leerBooleano(
+                "Imprimir con respuestas? (true/false): "
+            );
 
         System.out.println();
         System.out.println(examen.imprimir(conRespuestas));

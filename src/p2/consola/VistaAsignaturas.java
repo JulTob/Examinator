@@ -75,7 +75,10 @@ public class VistaAsignaturas extends ConsolaBase {
     }
 
     public void detectarAsignaturas() {
-        for (Asignatura detectada : repositorioPreguntas.detectarAsignaturasDesdeCarpetas()) {
+        List<Asignatura> detectadas =
+            repositorioPreguntas.detectarAsignaturasDesdeCarpetas();
+
+        for (Asignatura detectada : detectadas) {
             asignaturas.putIfAbsent(
                 detectada.getCodigo(),
                 detectada
@@ -84,7 +87,10 @@ public class VistaAsignaturas extends ConsolaBase {
     }
 
     private Asignatura crearAsignatura() {
-        String codigo = leerTextoObligatorio("Codigo asignatura: ").toUpperCase();
+        String codigo =
+            leerTextoObligatorio(
+                "Codigo asignatura: "
+            ).toUpperCase();
 
         if (asignaturas.containsKey(codigo)) {
             throw new IllegalArgumentException(
@@ -93,7 +99,11 @@ public class VistaAsignaturas extends ConsolaBase {
         }
 
         String titulo = leerTextoObligatorio("Titulo asignatura: ");
-        Asignatura asignatura = new Asignatura(codigo, titulo);
+        Asignatura asignatura =
+            new Asignatura(
+                codigo,
+                titulo
+            );
 
         asignaturas.put(codigo, asignatura);
         repositorioPreguntas.guardar(asignatura);

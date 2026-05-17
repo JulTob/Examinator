@@ -37,7 +37,10 @@ public class AplicacionConsola extends ConsolaBase {
             carpetaPreguntas,
             new ArchivoPreguntasMarkdown()
             );
-        RepositorioExamenes repositorioExamenes = new RepositorioExamenes(archivoExamenes);
+        RepositorioExamenes repositorioExamenes =
+            new RepositorioExamenes(
+                archivoExamenes
+            );
         GeneradorExamen generadorExamen = new GeneradorExamen();
         TestTester testTester = new TestTester(new SistemaDificultad());
 
@@ -121,7 +124,19 @@ public class AplicacionConsola extends ConsolaBase {
     }
 
     private void registrarAsignaturasPorDefecto() {
-        asignaturas.put("POO", new Asignatura("POO", "Programacion Orientada a Objetos"));
-        asignaturas.put("DADM", new Asignatura("DADM", "Desarrollo de aplicaciones para dispositivos moviles"));
+        asignaturas.put(
+            "POO",
+            new Asignatura(
+                "POO",
+                "Programacion Orientada a Objetos"
+            )
+        );
+        asignaturas.put(
+            "DADM",
+            new Asignatura(
+                "DADM",
+                "Desarrollo de aplicaciones para dispositivos moviles"
+            )
+        );
     }
 }
